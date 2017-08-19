@@ -7,7 +7,7 @@ const hasValue = curry((type: string, value: string): ((
 ) => boolean) => pipe(prop(type), equals(value)));
 const isColor = hasValue('color');
 const isRed = isColor('red');
-const isLarge = hasValue('color', 'large');
+const isLarge = hasValue('size', 'large');
 
 export const reds = filter(isRed);
 export const blues = filter(isColor('blue'));

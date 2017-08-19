@@ -3,6 +3,8 @@ import * as ramda2 from '../src/ramda-2';
 import * as ramda3 from '../src/ramda-3';
 import * as es6 from '../src/es6';
 
+import { forEachObjIndexed } from 'ramda';
+
 import { Marble } from '../src/marble.model';
 
 describe('Marbles', () => {
@@ -32,23 +34,25 @@ describe('Marbles', () => {
     ];
   });
 
-  [ramda1, ramda2, ramda3, es6].forEach(suite => {
-    describe('for a suite', () => {
+  const modules = { ramda1, ramda2, ramda3, es6 };
+
+  forEachObjIndexed((module: any, name: string) => {
+    describe(`for ${name}`, () => {
       it('counts reds', () => {
-        expect(suite.reds(marbles).length).toBe(2);
+        expect(module.reds(marbles).length).toBe(2);
       });
 
       it('counts blues', () => {
-        expect(suite.blues(marbles).length).toBe(1);
+        expect(module.blues(marbles).length).toBe(1);
       });
 
       it('counts not reds', () => {
-        expect(suite.notReds(marbles).length).toBe(3);
+        expect(module.notReds(marbles).length).toBe(3);
       });
 
       it('counts large reds', () => {
-        expect(suite.bigReds(marbles).length).toBe(1);
+        expect(module.bigReds(marbles).length).toBe(1);
       });
     });
-  });
+  }, modules);
 });
