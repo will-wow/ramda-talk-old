@@ -12,5 +12,6 @@ const isLarge = isSize('large');
 
 export const reds = filter(isRed);
 export const blues = filter(isColor('blue'));
+export const smalls = filter(isSize('small'));
 export const notReds = filter(compose(not, isRed));
 export const bigReds = filter(both(isRed, isLarge));

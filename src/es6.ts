@@ -6,18 +6,36 @@ export function reds(marbles: Marble[]): Marble[] {
   });
 }
 
-function getColors(marbles: Marble[], color: string, not?: boolean): Marble[] {
+function hasAttribute(
+  marble: Marble,
+  attribute: string,
+  value: string,
+  not: boolean
+) {
+  return not ? marble[attribute] === value : marble[attribute] === value;
+}
+
+function filterOnAttribute(
+  marbles: Marble[],
+  attribute: string,
+  value: string,
+  not?: boolean
+): Marble[] {
   return marbles.filter((marbel: Marble): boolean => {
-    return not ? marbel.color !== color : marbel.color === color;
+    return hasAttribute(marbel, attribute, value, not);
   });
 }
 
 export function blues(marbles: Marble[]): Marble[] {
-  return getColors(marbles, 'blue');
+  return filterOnAttribute(marbles, 'color', 'blue');
+}
+
+export function smalls(marbles: Marble[]): Marble[] {
+  return filterOnAttribute(marbles, 'size', 'small');
 }
 
 export function notReds(marbles: Marble[]): Marble[] {
-  return getColors(marbles, 'red', true);
+  return filterOnAttribute(marbles, 'color', 'red', true);
 }
 
 export function bigReds(marbles: Marble[]): Marble[] {

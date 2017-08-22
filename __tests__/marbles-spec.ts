@@ -1,6 +1,9 @@
+const _ = require('lodash/fp');
+
 import * as ramda1 from '../src/ramda-1';
 import * as ramda2 from '../src/ramda-2';
 import * as ramda3 from '../src/ramda-3';
+import * as lodashFp from '../src/lodash-fp';
 import * as es6 from '../src/es6';
 
 import { forEachObjIndexed } from 'ramda';
@@ -34,7 +37,7 @@ describe('Marbles', () => {
     ];
   });
 
-  const modules = { ramda1, ramda2, ramda3, es6 };
+  const modules = { ramda1, ramda2, ramda3, lodashFp, es6 };
 
   forEachObjIndexed((module: any, name: string) => {
     describe(`for ${name}`, () => {
@@ -44,6 +47,10 @@ describe('Marbles', () => {
 
       it('counts blues', () => {
         expect(module.blues(marbles).length).toBe(1);
+      });
+
+      it('counts smalls', () => {
+        expect(module.smalls(marbles).length).toBe(1);
       });
 
       it('counts not reds', () => {
