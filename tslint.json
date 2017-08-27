@@ -2,7 +2,7 @@
   "extends": ["tslint-config-airbnb", "tslint-config-prettier"],
   "rules": {
     "quotemark": [true, "single"],
-    "prefer-function-over-method": [true, "allow-public", "allow-protected"]
+    "prefer-function-over-method": [true, "allow-public", "allow-protected"],
+    "no-increment-decrement": [false]
   }
 }
-
