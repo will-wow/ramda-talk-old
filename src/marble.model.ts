@@ -1,5 +1,5 @@
 export interface Marble {
-  [key: string]: string;
+  // [key: string]: string;
   size: string;
   color: string;
 }

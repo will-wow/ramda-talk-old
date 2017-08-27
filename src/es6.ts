@@ -8,16 +8,16 @@ export function reds(marbles: Marble[]): Marble[] {
 
 function hasAttribute(
   marble: Marble,
-  attribute: string,
+  attribute: keyof Marble,
   value: string,
   not: boolean
 ) {
-  return not ? marble[attribute] === value : marble[attribute] === value;
+  return not ? marble[attribute] !== value : marble[attribute] === value;
 }
 
 function filterOnAttribute(
   marbles: Marble[],
-  attribute: string,
+  attribute: keyof Marble,
   value: string,
   not?: boolean
 ): Marble[] {

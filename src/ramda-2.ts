@@ -2,7 +2,7 @@ import { curry, prop, both, compose, not, pipe, filter, equals } from 'ramda';
 
 import { Marble } from './marble.model';
 
-const hasValue = curry((type: string, value: string): ((
+const hasValue = curry((type: keyof Marble, value: string): ((
   a: Marble
 ) => boolean) => pipe(prop(type), equals(value)));
 const isColor = hasValue('color');
