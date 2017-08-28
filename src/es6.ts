@@ -1,45 +1,50 @@
 import { Marble } from './marble.model';
+import * as _ from 'lodash';
 
 export function reds(marbles: Marble[]): Marble[] {
-  return marbles.filter((marbel: Marble): boolean => {
-    return marbel.color === 'red';
+  return marbles.filter((marble: Marble): boolean => {
+    return marble.color === 'red';
   });
 }
 
-function hasAttribute(
+function filterMarble(
   marble: Marble,
   attribute: keyof Marble,
-  value: string,
-  not: boolean
-) {
-  return not ? marble[attribute] !== value : marble[attribute] === value;
+  value: string
+): boolean {
+  return marble[attribute] === value;
 }
 
-function filterOnAttribute(
+function filterMarbles(
   marbles: Marble[],
   attribute: keyof Marble,
-  value: string,
-  not?: boolean
+  value: string
 ): Marble[] {
-  return marbles.filter((marbel: Marble): boolean => {
-    return hasAttribute(marbel, attribute, value, not);
-  });
+  return marbles.filter(marble =>
+    filterMarble(marble, attribute, value)
+  );
 }
 
 export function blues(marbles: Marble[]): Marble[] {
-  return filterOnAttribute(marbles, 'color', 'blue');
+  return _.filter(marbles, marble =>
+    filterMarble(marble, 'color', 'blue')
+  );
 }
 
 export function smalls(marbles: Marble[]): Marble[] {
-  return filterOnAttribute(marbles, 'size', 'small');
+  return _.filter(marbles, marble =>
+    filterMarble(marble, 'size', 'small')
+  );
 }
 
 export function notReds(marbles: Marble[]): Marble[] {
-  return filterOnAttribute(marbles, 'color', 'red', true);
+  return _.reject(marbles, marble =>
+    filterMarble(marble, 'color', 'blue')
+  );
 }
 
 export function bigReds(marbles: Marble[]): Marble[] {
-  return reds(marbles).filter((marble: Marble) => {
-    return marble.size === 'large';
-  });
+  return marbles
+    .filter(marble => filterMarble(marble, 'color', 'red'))
+    .filter(marble => filterMarble(marble, 'size', 'big'));
 }

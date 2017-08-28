@@ -12,19 +12,18 @@ export function reds(marbles: Marble[]): Marble[] {
   return reds;
 }
 
-function isMatch(x: string, y: string, not: boolean) {
-  if (not) {
-    return x !== y;
-  } else {
-    return x === y;
-  }
-}
-
-function getColors(marbles: Marble[], color: string, not?: boolean): Marble[] {
+function filterMarbles(
+  marbles: Marble[],
+  attribute: keyof Marble,
+  value: string,
+  negate?: boolean
+): Marble[] {
   const matches: Marble[] = [];
 
   for (let i = 0; i < marbles.length; i++) {
-    if (isMatch(marbles[i].color, color, not)) {
+    if (
+      negate ? marbles[i][attribute] !== value : marbles[i][attribute] === value
+    ) {
       matches.push(marbles[i]);
     }
   }
@@ -33,9 +32,19 @@ function getColors(marbles: Marble[], color: string, not?: boolean): Marble[] {
 }
 
 export function blues(marbles: Marble[]): Marble[] {
-  return getColors(marbles, 'blue');
+  return filterMarbles(marbles, 'color', 'blue');
+}
+
+export function smalls(marbles: Marble[]): Marble[] {
+  return filterMarbles(marbles, 'size', 'small');
 }
 
 export function notReds(marbles: Marble[]): Marble[] {
-  return getColors(marbles, 'red', true);
+  return filterMarbles(marbles, 'color', 'red', true);
+}
+
+export function bigReds(marbles: Marble[]): Marble[] {
+  return filterMarbles(
+    filterMarbles(marbles, 'color', 'red')
+  , 'size', 'large');
 }

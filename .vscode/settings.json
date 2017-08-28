@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib/",
-  "editor.formatOnSave": true,
-  "prettier.singleQuote": true
+  "editor.formatOnSave": false,
+  "prettier.singleQuote": true,
+  "prettier.printWidth": 70
 }

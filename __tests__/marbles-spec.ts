@@ -5,6 +5,7 @@ import * as ramda2 from '../src/ramda-2';
 import * as ramda3 from '../src/ramda-3';
 import * as lodashFp from '../src/lodash-fp';
 import * as es6 from '../src/es6';
+import * as es3 from '../src/es3';
 
 import { forEachObjIndexed } from 'ramda';
 
@@ -37,7 +38,7 @@ describe('Marbles', () => {
     ];
   });
 
-  const modules = { ramda1, ramda2, ramda3, lodashFp, es6 };
+  const modules = { ramda1, ramda2, ramda3, lodashFp, es6, es3 };
 
   forEachObjIndexed((module: any, name: string) => {
     describe(`for ${name}`, () => {
