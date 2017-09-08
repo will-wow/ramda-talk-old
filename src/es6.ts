@@ -7,7 +7,7 @@ export function reds(marbles: Marble[]): Marble[] {
   });
 }
 
-function filterMarble(
+function isMatchingMarble(
   marble: Marble,
   attribute: keyof Marble,
   value: string
@@ -20,31 +20,23 @@ function filterMarbles(
   attribute: keyof Marble,
   value: string
 ): Marble[] {
-  return marbles.filter(marble =>
-    filterMarble(marble, attribute, value)
-  );
+  return marbles.filter(marble => isMatchingMarble(marble, attribute, value));
 }
 
 export function blues(marbles: Marble[]): Marble[] {
-  return _.filter(marbles, marble =>
-    filterMarble(marble, 'color', 'blue')
-  );
+  return _.filter(marbles, marble => isMatchingMarble(marble, 'color', 'blue'));
 }
 
 export function smalls(marbles: Marble[]): Marble[] {
-  return _.filter(marbles, marble =>
-    filterMarble(marble, 'size', 'small')
-  );
+  return _.filter(marbles, marble => isMatchingMarble(marble, 'size', 'small'));
 }
 
 export function notReds(marbles: Marble[]): Marble[] {
-  return _.reject(marbles, marble =>
-    filterMarble(marble, 'color', 'blue')
-  );
+  return _.reject(marbles, marble => isMatchingMarble(marble, 'color', 'blue'));
 }
 
 export function bigReds(marbles: Marble[]): Marble[] {
   return marbles
-    .filter(marble => filterMarble(marble, 'color', 'red'))
-    .filter(marble => filterMarble(marble, 'size', 'big'));
+    .filter(marble => isMatchingMarble(marble, 'color', 'red'))
+    .filter(marble => isMatchingMarble(marble, 'size', 'big'));
 }

@@ -9,11 +9,16 @@
     "email": "",
     "url": ""
   },
-  "keywords": [""],
-  "files": ["lib"],
+  "keywords": [
+    ""
+  ],
+  "files": [
+    "lib"
+  ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
+    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html",
     "clean": "rimraf lib && rimraf coverage",
     "format": "prettier --write \"{src,__tests__}/**/*.ts\" --single-quote --trailing-comma es5",
     "lint": "tslint --force --format verbose \"src/**/*.ts\"",
@@ -27,7 +32,7 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.73",
-    "@types/ramda": "^0.24.7",
+    "@types/ramda": "^0.24.10",
     "lodash": "^4.17.4",
     "ramda": "^0.24.1"
   },
@@ -37,6 +42,7 @@
     "coveralls": "^2.0.0",
     "jest": "^20.0.4",
     "jest-environment-node-debug": "^2.0.0",
+    "markdown-to-slides": "^1.0.5",
     "prettier": "^1.5.2",
     "rimraf": "^2.0.0",
     "ts-jest": "^20.0.7",
@@ -54,7 +60,10 @@
       ".(ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": ["ts", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
     "testEnvironment": "node"
   }
 }

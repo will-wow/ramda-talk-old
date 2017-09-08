@@ -30,9 +30,8 @@ export function lodashAddAndSum(numbers: number[]): number {
 const addOne2: (n: number) => number = add(1);
 const addOneToAll2: (ns: number[]) => number[] = map(addOne);
 
-const addAndSumPositives: (ns: number[]) => number =
-  pipe(
-    filter(gt(0)),
-    map(add(1)),
-    sum
-  );
+const addAndSumPositives: (ns: number[]) => number = pipe(
+  filter(gt(0)),
+  map(add(1)),
+  sum
+);

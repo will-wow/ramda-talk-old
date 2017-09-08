@@ -5,7 +5,7 @@ import { Marble } from './marble.model';
 type isAttribute = (a: string) => (b: Marble) => boolean;
 
 // Type error w/out curry
-const isColor: isAttribute = curry(propEq('color'));
+const isColor: isAttribute = propEq('color');
 const isSize: isAttribute = curry(propEq('size'));
 const isRed = isColor('red');
 const isLarge = propEq('size', 'large');

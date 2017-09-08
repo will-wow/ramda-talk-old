@@ -2,7 +2,7 @@ import {
   greeting,
   ramdaGreeting,
   lodashAddAndSum,
-  ramdaAddAndSum
+  ramdaAddAndSum,
 } from '../src/tldr';
 
 describe('normal greeting', () => {

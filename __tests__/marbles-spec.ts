@@ -17,24 +17,24 @@ describe('Marbles', () => {
     marbles = [
       {
         size: 'large',
-        color: 'red'
+        color: 'red',
       },
       {
         size: 'medium',
-        color: 'red'
+        color: 'red',
       },
       {
         size: 'small',
-        color: 'blue'
+        color: 'blue',
       },
       {
         size: 'large',
-        color: 'black'
+        color: 'black',
       },
       {
         size: 'medium',
-        color: 'green'
-      }
+        color: 'green',
+      },
     ];
   });
 

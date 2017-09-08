@@ -1,17 +1,35 @@
-import { both, compose, not, pipe, filter, equals } from 'ramda';
-
 import { Marble } from './marble.model';
+import { allPass, curry, filter, propEq, not, compose } from 'ramda';
 
-const getSize = (a: Marble) => a.size;
-const getColor = (a: Marble) => a.color;
+// const isRed = (marble: Marble): boolean => marble.color === 'red';
+// const reds: (a: Marble[]) => Marble[] = filter(isRed);
 
-const isRed = pipe(getColor, equals('red'));
-const isColor = (color: string) => pipe(getColor, equals(color));
-const isSize = (size: string) => pipe(getSize, equals(size));
-const isLarge = isSize('large');
+// const red: (a: Marble[]) => Marble = filter(isRed);
 
-export const reds = filter(isRed);
-export const blues = filter(isColor('blue'));
-export const smalls = filter(isSize('small'));
-export const notReds = filter(compose(not, isRed));
-export const bigReds = filter(both(isRed, isLarge));
+const filterMarbles = (
+  attribute: keyof Marble,
+  value: string
+): ((a: Marble[]) => Marble[]) => filter(propEq(attribute, value));
+
+const filterMarbles = curry(
+  (attribute: keyof Marble, value: string, marbles: Marble[]): Marble[] =>
+    filter(propEq(attribute, value), marbles)
+);
+
+let marbles: Marble[];
+filterMarbles('color', 'red')(marbles);
+
+const isRed: (a: Marble) => boolean = propEq('color', 'red');
+const isWhite: (a: Marble) => boolean = propEq('color', 'red');
+const isBlue: (a: Marble) => boolean = propEq('color', 'red');
+const isSmall: (a: Marble) => boolean = propEq('size', 'small');
+
+const isAmerican = (marble: Marble): boolean =>
+  isRed(marble) && isWhite(marble) && isBlue(marble) && !isSmall(marble);
+
+const isAmerican: (a: Marble) => boolean = allPass([
+  isRed,
+  isWhite,
+  isBlue,
+  compose(not, isSmall),
+]);
