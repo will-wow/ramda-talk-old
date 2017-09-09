@@ -15,7 +15,7 @@ function isMatchingMarble(
   return marble[attribute] === value;
 }
 
-function filterMarbles(
+export function filterMarbles(
   marbles: Marble[],
   attribute: keyof Marble,
   value: string
@@ -39,4 +39,24 @@ export function bigReds(marbles: Marble[]): Marble[] {
   return marbles
     .filter(marble => isMatchingMarble(marble, 'color', 'red'))
     .filter(marble => isMatchingMarble(marble, 'size', 'big'));
+}
+
+export function favoriteColor(marbles: Marble[]): string {
+  const counts: { [color: string]: number } = {};
+
+  _.forEach(marbles, (marble: Marble): void => {
+    counts[marble.color] = (counts[marble.color] || 0)  + 1;
+  });
+
+  let biggestNumber: number = 0;
+  let biggestColor: string;
+
+  _.forEach(counts, (count, color) => {
+    if (count > biggestNumber) {
+      biggestColor = color;
+      biggestNumber = count;
+    }
+  });
+
+  return biggestColor;
 }

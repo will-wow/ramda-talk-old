@@ -38,8 +38,12 @@ describe('Marbles', () => {
 
   const modules = { ramda1, ramda2, ramda3,  es6, };
 
-  describe('favoriteColor', () => {
-    fit('finds the most common color', () => {
+  fdescribe('favoriteColor', () => {
+    it('finds the most common color imperitvly', () => {
+      expect(es6.favoriteColor(marbles)).toEqual('red');
+    });
+
+    it('finds the most common color declarativly', () => {
       expect(ramda1.favoriteColor(marbles)).toEqual('red');
     });
   });

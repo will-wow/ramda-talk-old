@@ -14,7 +14,7 @@ import {
 } from 'ramda';
 
 const isRed = (marble: Marble): boolean => marble.color === 'red';
-const reds: (a: Marble[]) => Marble[] = filter(isRed);
+export const reds: (a: Marble[]) => Marble[] = filter(isRed);
 
 // const red: (a: Marble[]) => Marble = filter(isRed);
 
@@ -31,7 +31,7 @@ const filterMarbles = (
 //   ): Marble[] => filter(propEq(attribute, value), marbles)
 // );
 
-let marbles: Marble[];
+const marbles: Marble[] = [{color: 'red', size: 'large'}];
 filterMarbles('color', 'red')(marbles);
 
 export const favoriteColor: (a: Marble[]) => string = pipe(

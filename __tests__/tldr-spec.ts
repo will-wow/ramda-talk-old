@@ -3,7 +3,7 @@ import {
   addOneToAll,
   addOneRamda,
   addOneToAllRamda,
-  addAndSumPositives
+  addAndSum
 } from '../src/tldr';
 
 describe('addOne', () => {
@@ -41,6 +41,6 @@ describe('addAndSum', () => {
   const numbers = [1, undefined, 2, 3];
 
   it('does the math', () => {
-    expect(addAndSumPositives(numbers)).toBe(9);
+    expect(addAndSum(numbers)).toBe(9);
   });
 });
