@@ -1,4 +1,4 @@
 export interface Marble {
-  size: string;
+  size: number;
   color: string;
 }

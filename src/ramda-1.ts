@@ -1,22 +1,16 @@
 import { Marble } from './marble.model';
 import {
-  allPass,
-  curry,
   filter,
-  propEq,
-  not,
-  compose,
   groupBy,
-  mapObjIndexed,
-  countBy,
-  length,
-  pipe,
-  prop,
-  toPairs,
   head,
   last,
+  length,
+  mapObjIndexed,
+  pipe,
+  prop,
+  propEq,
   sortBy,
-  map
+  toPairs
 } from 'ramda';
 
 const isRed = (marble: Marble): boolean => marble.color === 'red';

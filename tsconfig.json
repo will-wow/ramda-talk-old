@@ -10,8 +10,8 @@
     "preserveConstEnums": true,
     "removeComments": true,
     "inlineSourceMap": true,
-    // "noUnusedLocals": true,
-    // "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "typeRoots": ["./node_modules/@types"]
   },
   "include": ["src/**/*"],
