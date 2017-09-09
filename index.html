@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>What makes ramda different</title>
+		<title>Say What You Mean</title>
 		<style>
 			@import url('https://fonts.googleapis.com/css?family=Slabo+27px');
 
@@ -190,8 +190,8 @@ With ramda, the order of arguments is reversed - we pass the function first, the
 ## Composable
 
 ```typescript
-const addAndSumPositives: (ns: number[]) => number = pipe(
-  filter(gt(0)),
+export const addAndSum: (ns: number[]) => number = pipe(
+  reject(isNil),
   map(add(1)),
   sum
 );
@@ -201,7 +201,7 @@ const addAndSumPositives: (ns: number[]) => number = pipe(
 
 So the curried functions are kind of cool, because they save you some keystrokes. Fine. That’s cool, but probably not worth a whole new library. The power of ramda comes with function composition. Because it’s easy to define functions as partial applications of other functions, you can chain them together into these pipelines, without ever having to actually get a hold of the argument. In the Haskell language (another thing named after Haskell Curry), which Ramda takes a lot of inspiration from, this is called “point-free style”.
 
-So for instance, here we’re defining an addAndSumPositives function. You can see from the type signature that it takes an array of numbers and returns a number. And the pipeline says to take that array of numbers, filter for numbers greater than zero, add one to each one, then sum the whole thing. This is pretty concise, sure, but I think it’s also really easy to follow - do the filter, do the adding, sum it up. Obviously you could do all this with normal functions, but you’d end up with either deeply nested function calls, or using something like lodash dot chain, which is a lot less flexible.
+So for instance, here we’re defining an addAndSum function. You can see from the type signature that it takes an array of numbers and returns a number. And the pipeline says to take that array of numbers, remove any undefined or null values so we can do math, then add one to each one, and sum the whole thing. This is pretty concise, sure, but I think it’s also really easy to follow - reject the nils, do the adding, sum it up. Obviously you could do all this with normal functions, but you’d end up with either deeply nested function calls, or using something like lodash dot chain, which is a lot less flexible.
 
 So this is cool, I think, but we’re not being paid to write cool code. We get paid to write software that is correct, and that is easy to maintain. So what I want to do next is go through a small scenario that might be similar to something you’d do at work, though of course a lot simpler. That way, we can see how ramda can make our lives a little easier when building, maintaining, and refactoring our actual code.
 

@@ -3,9 +3,7 @@ const _ = require('lodash/fp');
 import * as ramda1 from '../src/ramda-1';
 import * as ramda2 from '../src/ramda-2';
 import * as ramda3 from '../src/ramda-3';
-import * as lodashFp from '../src/lodash-fp';
 import * as es6 from '../src/es6';
-import * as es3 from '../src/es3';
 
 import { forEachObjIndexed } from 'ramda';
 
@@ -17,28 +15,34 @@ describe('Marbles', () => {
     marbles = [
       {
         size: 'large',
-        color: 'red',
+        color: 'red'
       },
       {
         size: 'medium',
-        color: 'red',
+        color: 'red'
       },
       {
         size: 'small',
-        color: 'blue',
+        color: 'blue'
       },
       {
         size: 'large',
-        color: 'black',
+        color: 'black'
       },
       {
         size: 'medium',
-        color: 'green',
-      },
+        color: 'green'
+      }
     ];
   });
 
-  const modules = { ramda1, ramda2, ramda3, lodashFp, es6, es3 };
+  const modules = { ramda1, ramda2, ramda3,  es6, };
+
+  describe('favoriteColor', () => {
+    fit('finds the most common color', () => {
+      expect(ramda1.favoriteColor(marbles)).toEqual('red');
+    });
+  });
 
   forEachObjIndexed((module: any, name: string) => {
     describe(`for ${name}`, () => {

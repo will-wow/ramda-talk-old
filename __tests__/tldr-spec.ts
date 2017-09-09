@@ -1,34 +1,46 @@
 import {
-  greeting,
-  ramdaGreeting,
-  lodashAddAndSum,
-  ramdaAddAndSum,
+  addOne,
+  addOneToAll,
+  addOneRamda,
+  addOneToAllRamda,
+  addAndSumPositives
 } from '../src/tldr';
 
-describe('normal greeting', () => {
-  it('says hello', () => {
-    expect(greeting('bob')).toBe('hello world and bob');
-  });
-});
-
-describe('ramda greeting', () => {
-  it('says hello', () => {
-    expect(ramdaGreeting('bob')).toBe('hello world and bob');
-  });
-});
-
-describe('addAndSum', () => {
-  const numbers = [1, 2, 3];
-
+describe('addOne', () => {
   describe('lodash', () => {
-    it('does the math', () => {
-      expect(lodashAddAndSum(numbers)).toBe(9);
+    it('adds one', () => {
+      expect(addOne(5)).toBe(6);
     });
   });
 
   describe('ramda', () => {
-    it('does the math', () => {
-      expect(ramdaAddAndSum(numbers)).toBe(9);
+    it('adds one', () => {
+      expect(addOneRamda(5)).toBe(6);
     });
+  });
+});
+
+describe('addOneToAll', () => {
+  const numbers = [1, 2, 3];
+  const addedNumbers = [2, 3, 4];
+
+  describe('lodash', () => {
+    it('adds one to all', () => {
+      expect(addOneToAll(numbers)).toEqual(addedNumbers);
+    });
+  });
+
+  describe('ramda', () => {
+    it('adds one to all', () => {
+      expect(addOneToAllRamda(numbers)).toEqual(addedNumbers);
+    });
+  });
+});
+
+describe('addAndSum', () => {
+  const numbers = [1, undefined, 2, 3];
+
+  it('does the math', () => {
+    expect(addAndSumPositives(numbers)).toBe(9);
   });
 });

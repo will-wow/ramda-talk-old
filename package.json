@@ -18,7 +18,7 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html --include-remark",
+    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html --title \"Say What You Mean\" --include-remark",
     "deck:watch": "yarn run deck -- --watch",
     "clean": "rimraf lib && rimraf coverage",
     "format": "prettier --write \"{src,__tests__}/**/*.ts\" --single-quote --trailing-comma es5",
