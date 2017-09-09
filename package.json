@@ -18,8 +18,8 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html",
-    "serve:deck": "onchange \"deck/**/*.*\" -- npm run deck",
+    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html --include-remark",
+    "deck:watch": "yarn run deck -- --watch",
     "clean": "rimraf lib && rimraf coverage",
     "format": "prettier --write \"{src,__tests__}/**/*.ts\" --single-quote --trailing-comma es5",
     "lint": "tslint --force --format verbose \"src/**/*.ts\"",
@@ -44,7 +44,6 @@
     "jest": "^20.0.4",
     "jest-environment-node-debug": "^2.0.0",
     "markdown-to-slides": "^1.0.5",
-    "onchange": "^3.2.1",
     "prettier": "^1.5.2",
     "rimraf": "^2.0.0",
     "ts-jest": "^20.0.7",
