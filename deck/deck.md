@@ -1,10 +1,16 @@
-# Say What You Mean
+class: front-slide
 
-## Declarative programing with TypeScript and Ramda
+<div class="front">
+  <h1>Say What You Mean</h1>
 
-## Will Ockelmann-Wagner • wow@carbonfive.com
+  <h2>Declarative programing with TypeScript and Ramda</h2>
 
-![](deck/images/c5-social-logo-small.png)
+  <h3>Will Ockelmann-Wagner • wow@carbonfive.com</h3>
+
+  <img class="front-logo" src="deck/images/c5-logo-full.png">
+
+  <p>carbonfive.com</p>
+</div>
 
 ???
 
@@ -26,16 +32,18 @@ So what is ramda? It’s a utility library like lodash or underscore, and in fac
 
 What makes ramda different is three main things: it’s curried by default, it’s data-last, and because of the first two, it’s particularly composable. Let’s see what that jargon actually means.
 
---
+---
 
 ## Currying
+
+### Types
 
 ```typescript
 (x: number, y: number) => number
 (x: number) => (y: number) => number
 ```
 
-### Types
+### Example
 
 ```typescript
 add(1, 2) // 3
@@ -44,7 +52,7 @@ add(1)(2) // 3
 
 ???
 
-Quickly, I want to explain what’s going on up here. For those who haven’t seen quite this syntax before, these are typescript type declarations for function signatures. The first one describes a function that takes two numbers, x and y, and returns a number. The second describes a function that takes one number, x, and returns a function that takes one number and returns a number. 
+Quickly, I want to explain what’s going on up here. For those who haven’t seen quite this syntax before, these are typescript type declarations for function signatures. The first one describes a function that takes two numbers, x and y, and returns a number. The second describes a function that takes one number, x, and returns a function that takes one number and returns a number.
 
 Given that, we can talk about currying. Currying is a technique (named after the mathematician Haskell Curry, and not the delicious food) that says that if you have a function that takes two arguments, like the first signature, and you pass one argument in, you get back a function like the second signature - it the first argument in memory, takes the second argument, and then does whatever it’s supposed to do. Currying is really similar to partial application, which you may have used with something like lodash dot partial.
 
@@ -68,11 +76,11 @@ function addOne(n: number): number {
 const addOne: (n: number) => number = add(1);
 ```
 
-??? 
+???
 
 We can see what currying actually does for us here - in the first example, with lodash, if I wanted a function that adds one to a number, I would do it in the normal way - take a number argument, add it, and return it. And yeah, I could have just used plus.
 
-But the ramda version of add is curried - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and adds one to it. But I was able to do that is this really concise, declarative way - addOne literally is just add one, and currying lets me say that. 
+But the ramda version of add is curried - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and adds one to it. But I was able to do that is this really concise, declarative way - addOne literally is just add one, and currying lets me say that.
 
 A couple notes here:
 In typescript, I can declare that a constant has a function type, like I’m doing here. In this case I wouldn’t actually have to do it, because add already has the type number to number to number, but I thought it would be clearer to actually show the types.
@@ -123,6 +131,7 @@ So for instance, here we’re defining an addAndSumPositives function. You can s
 So this is cool, I think, but we’re not being paid to write cool code. We get paid to write software that is correct, and that is easy to maintain. So what I want to do next is go through a small scenario that might be similar to something you’d do at work, though of course a lot simpler. That way, we can see how ramda can make our lives a little easier when building, maintaining, and refactoring our actual code.
 
 ---
+class: center
 
 ## marbl.ly
 
@@ -147,11 +156,13 @@ interface Marble {
 
 ???
 
-Here’s the model for our app. It’s a TypeScript interface, so it describes the shape of an object, so elsewhere functions can say, “I only take arguments that match this interface.” And as you can see, there’s not a lot going on here. A marble has a size and a color, both of which are just strings like “large” or “red”. 
+Here’s the model for our app. It’s a TypeScript interface, so it describes the shape of an object, so elsewhere functions can say, “I only take arguments that match this interface.” And as you can see, there’s not a lot going on here. A marble has a size and a color, both of which are just strings like “large” or “red”.
 
 So we have marbles, and a bag of marbles is represented by just an array of these marble objects. What we’re going to be building as part of our MVP is a set of functions that take an array of marbles, and just filter it in different ways.
 
 ---
+
+class: center
 
 ## Red marbles
 
@@ -234,6 +245,8 @@ However, we didn’t actually have to add that type declaration - since isRed is
 For instance, if what we actually wanted was to not filter for all reds, but to find the first red, and we expressed that in the types, typescript would be able to catch that mistake right away. You definitely don’t need to use TypeScript to use Ramda, and in some ways it’s easier with standard JavaScript, since typescript has some problems with passing generic functions as callbacks, which we’ll see a little later. But since your functions are so concise, it’s really nice to have a compiler checking that the right type of data is passing through your pipelines. Now, you still need unit tests, but between the declarative nature of ramda, and the type safety of typescript - if a function looks right, and typechecks, it’s probably correct. And if it doesn’t typecheck, you probably made a mistake. That level of confidence is really nice.
 
 ---
+
+class: center
 
 ## filterMarbles()
 
