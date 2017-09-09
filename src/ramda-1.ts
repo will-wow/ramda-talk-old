@@ -19,23 +19,23 @@ import {
   map
 } from 'ramda';
 
-// const isRed = (marble: Marble): boolean => marble.color === 'red';
-// const reds: (a: Marble[]) => Marble[] = filter(isRed);
+const isRed = (marble: Marble): boolean => marble.color === 'red';
+const reds: (a: Marble[]) => Marble[] = filter(isRed);
 
 // const red: (a: Marble[]) => Marble = filter(isRed);
 
-// const filterMarbles = (
-//   attribute: keyof Marble,
-//   value: string
-// ): ((a: Marble[]) => Marble[]) => filter(propEq(attribute, value));
+const filterMarbles = (
+  attribute: keyof Marble,
+  value: string
+): ((a: Marble[]) => Marble[]) => filter(propEq(attribute, value));
 
-const filterMarbles = curry(
-  (
-    attribute: keyof Marble,
-    value: string,
-    marbles: Marble[]
-  ): Marble[] => filter(propEq(attribute, value), marbles)
-);
+// const filterMarbles = curry(
+//   (
+//     attribute: keyof Marble,
+//     value: string,
+//     marbles: Marble[]
+//   ): Marble[] => filter(propEq(attribute, value), marbles)
+// );
 
 // let marbles: Marble[];
 // filterMarbles('color', 'red')(marbles);

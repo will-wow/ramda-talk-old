@@ -337,3 +337,15 @@ const filterMarbles = curry(
 On the other hand if you’re going to be passing all three in at once, or sometimes one and sometimes the other, then maybe just passing marbles to the filter directly, and currying the whole thing, would be a better option. It depends on what you’re going to do with the function, and how much you want to avoid passing that marbles variable around manually.
 
 ---
+
+class: center
+
+## Favorite Color
+
+<img src="deck/images/green-marbles.jpg" width="80%" >
+
+???
+
+Okay, so by now we've seen 
+
+---
