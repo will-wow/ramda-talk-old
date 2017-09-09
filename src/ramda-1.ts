@@ -12,8 +12,11 @@ const filterMarbles = (
 ): ((a: Marble[]) => Marble[]) => filter(propEq(attribute, value));
 
 const filterMarbles = curry(
-  (attribute: keyof Marble, value: string, marbles: Marble[]): Marble[] =>
-    filter(propEq(attribute, value), marbles)
+  (
+    attribute: keyof Marble,
+    value: string,
+    marbles: Marble[]
+  ): Marble[] => filter(propEq(attribute, value), marbles)
 );
 
 let marbles: Marble[];
@@ -25,11 +28,14 @@ const isBlue: (a: Marble) => boolean = propEq('color', 'red');
 const isSmall: (a: Marble) => boolean = propEq('size', 'small');
 
 const isAmerican = (marble: Marble): boolean =>
-  isRed(marble) && isWhite(marble) && isBlue(marble) && !isSmall(marble);
+  isRed(marble) &&
+  isWhite(marble) &&
+  isBlue(marble) &&
+  !isSmall(marble);
 
 const isAmerican: (a: Marble) => boolean = allPass([
   isRed,
   isWhite,
   isBlue,
-  compose(not, isSmall),
+  compose(not, isSmall)
 ]);

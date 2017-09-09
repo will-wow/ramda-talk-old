@@ -324,8 +324,11 @@ Because of the way we defined filterMarbles, we’d have to call it in two round
 
 ```typescript
 const filterMarbles = curry(
-  (attribute: keyof Marble, value: string, marbles: Marble[]): Marble[] =>
-    filter(propEq(attribute, value), marbles)
+  (
+    attribute: keyof Marble,
+    value: string,
+    marbles: Marble[]
+  ): Marble[] => filter(propEq(attribute, value), marbles)
 );
 ```
 
