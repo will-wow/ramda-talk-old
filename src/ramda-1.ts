@@ -31,8 +31,8 @@ const filterMarbles = (
 //   ): Marble[] => filter(propEq(attribute, value), marbles)
 // );
 
-// let marbles: Marble[];
-// filterMarbles('color', 'red')(marbles);
+let marbles: Marble[];
+filterMarbles('color', 'red')(marbles);
 
 export const favoriteColor: (a: Marble[]) => string = pipe(
   groupBy(prop('color')),

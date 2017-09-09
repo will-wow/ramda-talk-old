@@ -50,4 +50,3 @@ export const favoriteColor: (a: Marble[]) => string = pipe(
   highestPair,
   colorFromPair
 );
-

@@ -346,6 +346,68 @@ class: center
 
 ???
 
-Okay, so by now we've seen 
+Okay, so by now we've seen BLAH BLAH
 
 ---
+
+## favoriteColor() pipeline
+
+```typescript
+const favoriteColor: (a: Marble[]) => string = pipe(
+  groupBy(prop('color')),
+  mapObjIndexed(length),
+  toPairs,
+  sortBy(last),
+  last,
+  head
+);
+```
+
+???
+
+This is complicated. Maybe it's hard to read because of the last last head thing?
+
+---
+
+## favoriteColor() refactor
+
+```typescript
+type ColorPair = [string, number];
+
+const highestPair: (a: ColorPair[]) => ColorPair = last;
+const colorFromPair: (a: [string, number]) => string = head;
+const countFromPair: (a: [string, number]) => number = head;
+
+export const favoriteColor: (a: Marble[]) => string = pipe(
+  groupBy(prop('color')),
+  mapObjIndexed(length),
+  toPairs,
+  sortBy(countFromPair),
+  highestPair,
+  colorFromPair
+);
+```
+
+???
+
+This is more verbose but easier to read. We've found ourselves using this pattern of redefining ramda functions pretty commonly. It's good for readability, and also for TS generics. Generics are probably worth their own talk, so just trust me.
+
+---
+
+## Other Cool Stuff
+
+- lenses
+- FantasyLand (Monads, Functors, etc.)
+- ifEquals/cond
+- [Searchable Docs](http://ramdajs.com/docs)
+- [What Function Should I Use](https://github.com/ramda/ramda/wiki/What-Function-Should-I-Use%3F)
+
+???
+
+Other interesting things.
+
+---
+
+class: center middle
+
+## Thanks!
