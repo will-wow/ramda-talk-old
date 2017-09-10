@@ -486,10 +486,10 @@ This is a little more verbose, but a lot easier to read. On my current ramda pro
 
 So that's probably enough for one talk. But there's a lot more in ramda to dig into, if you're interseted. 
 
-- Lenses are a way of creating functions that can get an set deeply neseted data without mutation, which can be great for something like redux.
-- ifEquals and cond are 
-- FantasyLand is a fp spec
-- docs are nice
+- Lenses are a way of creating functions that can get and set deeply neseted data without mutation, which can be great for something like redux.
+- ifEquals and cond are functions that can let you embed conditional logic in your pipelines
+- FantasyLand is interesting - it's a set of interfaces for functional construcuts like Monads and Functors. If that's something that you're interested in, ramda supports fantasy land, so map can map over FantasyLand-complient functor, for instance. If that doesn't mean anything to you, you don't have to know about that stuff to get a lot out of ramda.
+- Finally, since there are so many functions, it's helpful that the docs are pretty good. The official API docs are pretty extensive, and they also have this nice "what function should I use" page that I find really useful.
 
 ---
 
@@ -499,13 +499,24 @@ class: center middle
 
 ???
 
-So hopefully that was a good taste of what programming with Ramda is like. It's a pretty different and fun way to program, and is a way to get a lot of the benefits of a super functional langage like Haskell or Elixir, but within an existing javascript project. As we've seen, it's also usually pretty straightforward to refactor a lodash function into a ramda one, so this is definitly something you can start using today, if your team is up for it. So my advice to you is:
+So! Hopefully that was a good taste of what programming with Ramda is like. It's a pretty different and fun way to program, and is a way to get a lot of the benefits of a super functional langage like Haskell or Elixir, but within an existing javascript project. As we've seen, it's also usually pretty straightforward to refactor a lodash function into a ramda one, so this is definitly something you can start using today, if your team is up for it. 
 
 ---
 
 class: center middle
 
-## DO IT!
+## My advice?
+
+???
+
+So my advice to you is:
+
+---
+
+count: false
+class: center middle
+
+<img src="deck/images/do-it.gif" width="80%">
 
 ---
 

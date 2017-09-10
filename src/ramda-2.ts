@@ -13,17 +13,14 @@ import {
   pipe,
   prop,
   sortBy,
-  toPairs
+  toPairs,
 } from 'ramda';
 
 import { Marble } from './marble.model';
 
-const hasValue = curry(
-  <T extends keyof Marble>(
-    type: T,
-    value: Marble[T]
-  ): ((a: Marble) => boolean) => pipe(prop(type), equals(value))
-);
+const hasValue = curry(<T extends keyof Marble>(type: T, value: Marble[T]): ((
+  a: Marble
+) => boolean) => pipe(prop(type), equals(value)));
 const isColor = hasValue('color');
 const isRed = isColor('red');
 const isSize = hasValue('size');

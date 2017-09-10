@@ -10,7 +10,7 @@ import {
   prop,
   propEq,
   sortBy,
-  toPairs
+  toPairs,
 } from 'ramda';
 
 const isRed = (marble: Marble): boolean => marble.color === 'red';
@@ -31,7 +31,7 @@ const filterMarbles = (
 //   ): Marble[] => filter(propEq(attribute, value), marbles)
 // );
 
-const marbles: Marble[] = [{color: 'red', size: 'large'}];
+const marbles: Marble[] = [{ color: 'red', size: 'large' }];
 filterMarbles('color', 'red')(marbles);
 
 export const favoriteColor: (a: Marble[]) => string = pipe(

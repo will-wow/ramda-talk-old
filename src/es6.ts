@@ -45,7 +45,7 @@ export function favoriteColor(marbles: Marble[]): string {
   const counts: { [color: string]: number } = {};
 
   _.forEach(marbles, (marble: Marble): void => {
-    counts[marble.color] = (counts[marble.color] || 0)  + 1;
+    counts[marble.color] = (counts[marble.color] || 0) + 1;
   });
 
   let biggestNumber: number = 0;

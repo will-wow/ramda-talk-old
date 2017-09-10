@@ -15,28 +15,28 @@ describe('Marbles', () => {
     marbles = [
       {
         size: 'large',
-        color: 'red'
+        color: 'red',
       },
       {
         size: 'medium',
-        color: 'red'
+        color: 'red',
       },
       {
         size: 'small',
-        color: 'blue'
+        color: 'blue',
       },
       {
         size: 'large',
-        color: 'black'
+        color: 'black',
       },
       {
         size: 'medium',
-        color: 'green'
-      }
+        color: 'green',
+      },
     ];
   });
 
-  const modules = { ramda1, ramda2, ramda3,  es6, };
+  const modules = { ramda1, ramda2, ramda3, es6 };
 
   fdescribe('favoriteColor', () => {
     it('finds the most common color imperitvly', () => {

@@ -3,7 +3,7 @@ import {
   addOneToAll,
   addOneRamda,
   addOneToAllRamda,
-  addAndSum
+  addAndSum,
 } from '../src/tldr';
 
 describe('addOne', () => {
