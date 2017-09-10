@@ -269,7 +269,7 @@ class: center
 
 ## filterMarbles()
 
-<img src="deck/images/green-marbles.jpg" width="80%" >
+<img src="deck/images/filtered-marbles.jpg" width="80%" >
 
 ???
 
