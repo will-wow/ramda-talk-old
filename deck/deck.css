@@ -2,7 +2,6 @@
 
 .remark-slide-content {
   font-family: 'Slabo 27px', sans-serif;
-;
   background: rgb(250, 250, 250);
 }
 
@@ -20,7 +19,7 @@
   left: 20px;
 }
 
-li {
+.remark-slide-content li {
   font-size: 2rem;
 }
 
@@ -49,7 +48,6 @@ li {
   margin-top: 1.5rem;
 }
 
-
 .front h1 {
   font-size: 40px;
 }
@@ -61,4 +59,8 @@ li {
 
 .front h3 {
   font-size: 24px;
+}
+
+.remark-code-line-highlighted, .remark-code-span-highlighted {
+  background-color: rgba(255, 255, 255, 0.1);
 }

@@ -9,16 +9,12 @@
     "email": "",
     "url": ""
   },
-  "keywords": [
-    ""
-  ],
-  "files": [
-    "lib"
-  ],
+  "keywords": [""],
+  "files": ["lib"],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -o ./index.html --title \"Say What You Mean\" --include-remark",
+    "deck": "markdown-to-slides ./deck/deck.md -s ./deck/deck.css -j ./deck/deck.js -o ./index.html --title \"Say What You Mean\" --include-remark",
     "deck:watch": "yarn run deck -- --watch",
     "clean": "rimraf lib && rimraf coverage",
     "format": "prettier --write \"{src,__tests__}/**/*.ts\" --single-quote --trailing-comma es5",
@@ -61,10 +57,7 @@
       ".(ts)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
+    "moduleFileExtensions": ["ts", "js"],
     "testEnvironment": "node"
   }
 }
