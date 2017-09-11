@@ -1,4 +1,14 @@
-import { reject, compose, pipe, map, add, sum, isNil } from 'ramda';
+import {
+  reject,
+  inc,
+  compose,
+  pipe,
+  map,
+  add,
+  sum,
+  isNil,
+  multiply
+} from 'ramda';
 import * as _ from 'lodash';
 
 export function addOne(n: number): number {
@@ -10,10 +20,24 @@ export function addOneToAll(numbers: number[]): number[] {
 }
 
 export const addOneRamda: (n: number) => number = add(1);
-export const addOneToAllRamda: (ns: number[]) => number[] = map(addOne);
+export const addOneToAllRamda: (ns: number[]) => number[] = map(
+  addOne
+);
 
-export const addAndSum: (ns: number[]) => number = pipe(
+export function tenTimesSum(numbers: number[]): number {
+  return multiply(10, sum(numbers));
+}
+
+export const tenTimesSum2: (numbers: number[]) => number =
+compose(multiply(10), sum);
+
+export const tenTimesSum3: (numbers: number[]) => number = pipe(
+  sum,
+  multiply(10)
+);
+
+export const tenTimesSum4: (numbers: number[]) => number = pipe(
   reject(isNil),
-  map(add(1)),
-  sum
+  sum,
+  multiply(10)
 );

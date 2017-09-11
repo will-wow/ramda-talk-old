@@ -3,7 +3,9 @@ import {
   addOneToAll,
   addOneRamda,
   addOneToAllRamda,
-  addAndSum,
+  tenTimesSum,
+  tenTimesSum2,
+  tenTimesSum3
 } from '../src/tldr';
 
 describe('addOne', () => {
@@ -37,10 +39,19 @@ describe('addOneToAll', () => {
   });
 });
 
-describe('addAndSum', () => {
-  const numbers = [1, undefined, 2, 3];
+fdescribe('timeTimesSum', () => {
+  const numbers = [1, 2, 3];
 
-  it('does the math', () => {
-    expect(addAndSum(numbers)).toBe(9);
+  it('1 does the math', () => {
+    expect(tenTimesSum(numbers)).toBe(60);
+  });
+
+  it('2 does the math', () => {
+    expect(tenTimesSum2(numbers)).toBe(60);
+  });
+
+  it('3 does the math', () => {
+    const numbers = [1, undefined, 2, 3];
+    expect(tenTimesSum3(numbers)).toBe(60);
   });
 });
