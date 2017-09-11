@@ -86,8 +86,6 @@ class: front-slide
 
   <img class="front-logo" src="deck/images/c5-logo-full.png">
 
-  TODO: explain our code is a bunch of small functions
-
   <p>carbonfive.com</p>
 </div>
 
@@ -387,7 +385,7 @@ const reds: (`a`: Marble[]) => Marble[] = filter(isRed);
 
 ???
 
-One thing you might notice is that I’m just calling the Marble argument “a”. That’s usually bad programming practice - you want to name your variables with full words, so you’re not confused about what they do later. In this case though, we’re not passing that “a” to anything, and we don’t really care about the name, only the types - mable array to marble array. So on my current project we’ve been just naming those variables abc, to keep the focus on the types.
+And one thing you might notice is that I’m just calling the Marble argument “a”. That’s usually bad programming practice - you want to name your variables with full words, so you’re not confused about what they do later. In this case though, we’re not passing that “a” to anything, and we don’t really care about the name, only the types - mable array to marble array. So on my current project we’ve been just naming those variables abc, to keep the focus on the types.
 
 ---
 
@@ -400,7 +398,7 @@ One thing you might notice is that I’m just calling the Marble argument “a�
 
 ???
 
-However, we didn’t actually have to add that type declaration - since isRed is already typed, TypeScript can correctly infer the type signature of reds. This lets you be a little more concise, but there’s a cost - if you’re not careful, TypeScript could infer something incorrect. And since using a statically typed language is all about letting the compiler catch mistakes, that might not be worth it.
+That type signature isn't strictly nessecary, since in this case TypeScript can infer the type.
 
 ---
 
@@ -410,7 +408,7 @@ However, we didn’t actually have to add that type declaration - since isRed is
 
 ???
 
-For instance, if what we actually wanted was to not filter for all reds, but to find the first red, and we expressed that in the types, typescript would be able to catch that mistake right away. You definitely don’t need to use TypeScript to use Ramda, and in some ways it’s easier with standard JavaScript, since typescript has some problems with passing generic functions as callbacks, which we’ll see a little later. But since your functions are so concise, it’s really nice to have a compiler checking that the right type of data is passing through your pipelines. Now, you still need unit tests, but between the declarative nature of ramda, and the type safety of typescript - if a function looks right, and typechecks, it’s probably correct. And if it doesn’t typecheck, you probably made a mistake. That level of confidence is really nice.
+But if what we actually wanted was to not filter for all reds, but to find the first red, and we expressed that in the types with Marble Array to Marble, typescript would be able to catch that mistake right away. You definitely don’t need to use TypeScript to use Ramda, and in some ways it’s easier with standard JavaScript, for reasons we’ll see a little later. But since your functions are so concise, it’s really nice to have a compiler checking that the right type of data is passing through your pipelines. Now, you still need unit tests, but between the declarative nature of ramda, and the type safety of typescript - if a function looks right, and typechecks, it’s probably correct. And if it doesn’t typecheck, you probably made a mistake, like we did here. That level of confidence is really nice.
 
 ---
 
@@ -434,7 +432,7 @@ function isMatchingMarble(
   attribute: keyof Marble,
   value: string
 ): boolean {
-*  return marble[attribute] === value;
+* return marble[attribute] === value;
 }
 
 function filterMarbles(
@@ -442,15 +440,15 @@ function filterMarbles(
   attribute: keyof Marble,
   value: string
 ): Marble[] {
-*  return marbles.filter(marble =>
-*    isMatchingMarble(marble, attribute, value)
+* return marbles.filter(marble =>
+*   isMatchingMarble(marble, attribute, value)
   );
 }
 ```
 
 ???
 
-If we wanted to do that in ES6, it would probably look something like this. We learned from our last Ramda refactor, so this time we pull that isMatchingMarble function out to start with. And this time it takes in an attribute and a value, and checks if they match. Then our filter function just takes in all the data, and for each marble passes it along to the isMatchingMarble function. Since isMatchingMarble isn’t curried, this is kind of verbose, but still, pretty reasonable, and now we can run filterMarbles with marbles, color, red, to recreate our old reds function. Still, let’s see what ramda can do to clean this up.
+If we wanted to do that in ES6, it would probably look something like this. We learned from our last Ramda refactor, so this time we extract this isMatchingMarble function to start with. And this time it takes in an attribute and a value, and checks if they match. Then our filterMarbles function just takes in all the data, and for each marble passes it along to the isMatchingMarble function. Since isMatchingMarble isn’t curried, this is kind of verbose, since we're taking in three parameters, and passing them directly to another function that also has to take three parameters. Still, pretty reasonable, and now we can run filterMarbles with marbles, color, red, to recreate our old reds function. But we can do better: let’s see what ramda can do to clean this up.
 
 ---
 
@@ -468,7 +466,7 @@ const filterMarbles = curry(
 
 ???
 
-So this is nice - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function, but is curried for easier use. 
+So first of all - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function, but is curried for easier use. So we can drop that function entierly.
 
 ---
 
@@ -479,16 +477,16 @@ count: false
 ```typescript
 const filterMarbles = curry(
   (
-*    attribute: keyof Marble,
-*    value: string,
-*    marbles: Marble[]
+*   attribute: keyof Marble,
+*   value: string,
+*   marbles: Marble[]
   ): Marble[] => filter(propEq(`attribute, value`), marbles)
 );
 ```
 
 ???
 
-Sadly, because we have to pass attribute and value to an interior function call, this can't be a point-free function - we have to actually declare our formal parameters and pass them around.
+Unfortunatly, because we have to pass attribute and value to an interior function call, this can't be a point-free function - we have to actually declare our formal parameters and pass them around.
 
 ---
 
@@ -512,7 +510,7 @@ filterMarbles('color', 'red', marbles);
 
 ???
 
-But, we can wrap Ramda's curry function around our function, which means that like the library functions, we can call filterMarbles color, red to make a function that pulls out red marbles, which is nice.
+But, we can wrap Ramda's curry function around our function, which means that like the library functions, we can call filterMarbles color, red to make a function that pulls out red marbles, which is nice. And as you can see at the bottom, when we curry our function, we can group the arguments however we want.
 
 ---
 
@@ -543,7 +541,7 @@ const favoriteColor: (a: Marble[]) => string;
 
 ???
 
-Before we go on to the ramda answer, can anyone tell me an approach on how you would solve this? Here are the types again for a Marble and our favoriteColor function, if that helps. I'll give you a moment to think about it, and don't worry if your idea is only half-baked - if you're answer is too good, you won't be impressed by my solution!
+Before we go on to the ramda answer, can anyone tell me an approach on how you would solve this? Here are the types again for a Marble and the favoriteColor function we want to build, if that helps. I'll give you a moment to think about it, and don't worry if your idea is only half-baked - if you're answer is too good, you won't be impressed by my solution!
 
 ---
 
@@ -613,7 +611,7 @@ const favoriteColor: (a: Marble[]) => string = `pipe`(
 
 ???
 
-First, we're using the pipe function we saw at the begining of the talk, so our marbles go into groupBy, and its output goes into mapObjIndexed, and so on, until it returns. This is where typescript can really shine - the types make sure that as you tranform your data, the output type from one function matches the input type of the next one.
+First, we're again using the pipe function we saw at the begining of the talk, so our marbles go into groupBy, and its output goes into mapObjIndexed, and so on, until it returns. This is where typescript can really shine - the types make sure that as you tranform your data, the output type from one function matches the input type of the next one.
 
 So what's happening here?
 
@@ -636,7 +634,7 @@ const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-We use prop color to make a function that extracts the color from a marble
+First, prop is a ramda function that extracts an attribute from an object, so we can use prop(color) to make a function that gets the color from a marble.
 
 ---
 
@@ -699,7 +697,7 @@ const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-Next we use toPairs to transform the key-value combinations to an array of arrays of color comma count
+Next we use toPairs to transform the key-value combinations to an array of arrays of [color, count]
 
 ---
 
@@ -764,7 +762,7 @@ const favoriteColor: (a: Marble[]) => string = pipe(
 
 And finally use head to get the first element in the pair, the color. Done!
 
-So I think that reasonable people could disagree on if they like this or the imeritive version more. For me, this is nice. It's certainly very functional, and I like the clear step-by-step process. It does rely on the pairs construct, which isn't super intuitive, and the the last, last, head thing is a little hard to follow. Let's see if we can do something at least about the latter issue.
+So I think that reasonable people could disagree on if they like this or the imeritive version more. For me, this is nice. It's certainly very functional, and I like the clear step-by-step process. It does rely on the pairs construct, which isn't super intuitive, and the the last, last, head thing at the end is a little hard to follow. Let's see if we can do something at least about the latter issue.
 
 ---
 
@@ -792,6 +790,8 @@ export const favoriteColor: (a: Marble[]) => string = pipe(
 This is a little more code, but a lot easier to read. On my current ramda project, we've found ourselves doing this pattern a lot - redefining ramda functions with description names. It's definitly good for readability - colorFromPair makes a lot more sense than head. It's also sometimes nessecary to get things to TypeCheck. TypeScript has a concept of generics, which let you define polymorphic functions, but they don't really work when you pass a function as a parameter. Generics are probably worth their own talk, so I won't get into it, but if you end up using TypeScript with Ramda (and you should), keep this technique in mind.
 
 So as you can see, using Ramda doesn't just allow you code to be shorter - it also pushes you towards somtimes radically different solutions than what would be easy to do without it.
+
+And in fact, this is what a lot of the code in our Angular 4 project looks like - a bunch of small pointfree functions, composed together, tested in isolation, and then used in our component classes and RxJs streams.
 
 ---
 
@@ -19446,9 +19446,6 @@ if (typeof exports === 'object') {
 })(window)
 },{}]},{},[3])
 ;</script>
-		<script>
-			var slideshow = remark.create();
-		</script>
 		<script>var slideshow = remark.create({
   highlightLines: true,
   highlightStyle: 'solarized-dark',
