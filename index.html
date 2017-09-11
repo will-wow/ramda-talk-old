@@ -80,11 +80,13 @@ class: front-slide
 <div class="front">
   <h1>Say What You Mean</h1>
 
-  <h2>Declarative programing with TypeScript and Ramda</h2>
+  <h2>Declarative programming with TypeScript and Ramda</h2>
 
   <h3>Will Ockelmann-Wagner • wow@carbonfive.com • @WowItsWillWow</h3>
 
   <img class="front-logo" src="deck/images/c5-logo-full.png">
+
+  TODO: explain our code is a bunch of small functions
 
   <p>carbonfive.com</p>
 </div>
@@ -355,7 +357,7 @@ const reds: (a: Marble[]) => Marble[] = `filter(isRed)`;
 
 ???
 
-We can actually drop the function declaration entirely, and just declare reds as filter(isRed). Since filter is curried, that's all we need.
+We can actually drop the function declaration entirely, and just declare reds as filter(isRed). Since filter is curried, that's all we need. 
 
 ---
 
@@ -370,7 +372,7 @@ const reds: `(a: Marble[]) => Marble[]` = filter(isRed);
 
 ???
 
-I'm adding a type signature both to make it clear to readers what this function does, and to make sure that our function does what we expect it to.
+I'm adding a type signature both to make it clear to readers what this function does, and to make sure that our function does what we expect it to. 
 
 ---
 
@@ -466,7 +468,7 @@ const filterMarbles = curry(
 
 ???
 
-So this is nice - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function, but is curried for easier use.
+So this is nice - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function, but is curried for easier use. 
 
 ---
 
@@ -19444,6 +19446,9 @@ if (typeof exports === 'object') {
 })(window)
 },{}]},{},[3])
 ;</script>
+		<script>
+			var slideshow = remark.create();
+		</script>
 		<script>var slideshow = remark.create({
   highlightLines: true,
   highlightStyle: 'solarized-dark',

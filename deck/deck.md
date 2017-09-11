@@ -3,11 +3,13 @@ class: front-slide
 <div class="front">
   <h1>Say What You Mean</h1>
 
-  <h2>Declarative programing with TypeScript and Ramda</h2>
+  <h2>Declarative programming with TypeScript and Ramda</h2>
 
   <h3>Will Ockelmann-Wagner • wow@carbonfive.com • @WowItsWillWow</h3>
 
   <img class="front-logo" src="deck/images/c5-logo-full.png">
+
+  TODO: explain our code is a bunch of small functions
 
   <p>carbonfive.com</p>
 </div>
