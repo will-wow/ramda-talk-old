@@ -568,17 +568,34 @@ count: false
 ```typescript
 const favoriteColor: (a: Marble[]) => string = pipe(
 * groupBy(prop('color')),
+  // {
+  //   red: [
+  //    { color: 'red', size: 'small' },
+  //    { color: 'red', size: 'large' },
+  //   ],
+  //   blue: [
+  //    { color: 'blue', size: 'small' },
+  //   ]
+  // }
   mapObjIndexed(length),
   toPairs,
   sortBy(last),
   last,
   head
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
 
 GroupBy is a function that does mostly the same thing as the first part of the imperitive solution - takes an array of marbles, and a function that gets colors from marbles, and turns it into a dictionary where the keys are colors and the values are arrays of the matching marbles.
+
+So given the inputs of two reds and one blue, group by would group them by color, like you see up there.
 
 ---
 
@@ -590,16 +607,26 @@ count: false
 const favoriteColor: (a: Marble[]) => string = pipe(
   groupBy(prop('color')),
 * mapObjIndexed(length),
+  // {
+  //   red: 2,
+  //   blue: 1
+  // }
   toPairs,
   sortBy(last),
   last,
   head
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
 
-mapObjIndexed is ramda mapping function for objects. It works like map, but returns an object where only the values are changed. This lets us transform a dictionary of marble arrays into a dictionary of marble counts.
+mapObjIndexed is ramda mapping function for objects. It works like map, but returns an object where only the values are changed. So passing the array counting function in lets us transform a dictionary of marble arrays into a dictionary of marble counts.
 
 ---
 
@@ -612,15 +639,25 @@ const favoriteColor: (a: Marble[]) => string = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
 * toPairs,
+  // [
+  //   ['red', 2],
+  //   ['blue', 1],
+  // }
   sortBy(last),
   last,
   head
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
 
-Next we use toPairs to transform the key-value combinations to an array of arrays of [color, count]
+Next we use toPairs to transform the key-value combinations to an array of arrays of [color, count]. This will let us sort the arrays.
 
 ---
 
@@ -634,9 +671,19 @@ const favoriteColor: (a: Marble[]) => string = pipe(
   mapObjIndexed(length),
   toPairs,
 * sortBy(last),
+  // [
+  //   ['blue', 1],
+  //   ['red', 2],
+  // }
   last,
   head
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
@@ -656,8 +703,15 @@ const favoriteColor: (a: Marble[]) => string = pipe(
   toPairs,
   sortBy(last),
 * last,
+  // ['red', 2],
   head
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
@@ -678,7 +732,14 @@ const favoriteColor: (a: Marble[]) => string = pipe(
   sortBy(last),
   last,
 * head
+  // 'red'
 );
+
+favoriteColor([
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+]);
 ```
 
 ???
@@ -695,8 +756,8 @@ So I think that reasonable people could disagree on if they like this or the ime
 type ColorPair = [string, number];
 
 *const highestPair: (a: ColorPair[]) => ColorPair = last;
-*const colorFromPair: (a: [string, number]) => string = head;
-*const countFromPair: (a: [string, number]) => number = head;
+*const colorFromPair: (a: ColorPair) => string = head;
+*const countFromPair: (a: ColorPair) => number = last;
 
 export const favoriteColor: (a: Marble[]) => string = pipe(
   groupBy(prop('color')),
@@ -710,7 +771,9 @@ export const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-This is a little more code, but a lot easier to read. On my current ramda project, we've found ourselves doing this pattern a lot - redefining ramda functions with description names. It's definitly good for readability - colorFromPair makes a lot more sense than head. It's also sometimes nessecary to get things to TypeCheck. TypeScript has a concept of generics, which let you define polymorphic functions, but they don't really work when you pass a function as a parameter. Generics are probably worth their own talk, so I won't get into it, but if you end up using TypeScript with Ramda (and you should), keep this technique in mind.
+This is a little more code, but a lot easier to read. On my current ramda project, we've found ourselves doing this pattern a lot - redefining ramda functions with more descriptive names. It's definitly good for readability - colorFromPair makes a lot more sense than head.
+
+It's also sometimes nessecary to get things to TypeCheck. TypeScript has a concept of generics, which let you define polymorphic functions, but they don't really work when you pass a function as a parameter. Generics are probably worth their own talk, so I won't get into it, but if you end up using TypeScript with Ramda (and you should), keep this technique in mind.
 
 So as you can see, using Ramda doesn't just allow you code to be shorter - it also pushes you towards somtimes radically different solutions than what would be easy to do without it.
 
