@@ -80,7 +80,7 @@ class: front-slide
 <div class="front">
   <h1>Say What You Mean</h1>
 
-  <h2>Declarative programming with TypeScript and Ramda</h2>
+  <h2>Declarative programming with Ramda and TypeScript</h2>
 
   <h3>Will Ockelmann-Wagner • wow@carbonfive.com • @WowItsWillWow</h3>
 
@@ -93,7 +93,7 @@ class: front-slide
 
 Say hi
 
-Today I want to talk about Ramda, which is a functional utility library for javascript, and the functional, declarative, compositional style of programming that it allows for. We’ve been using it on a project at Carbon Five recently, and I think the team has found it to be a useful, and particularly fun way to program. So today we’ll see some of the benefits of this style of programming, and see how TypeScript can make it even more powerful.
+Today I want to talk about Ramda, which is a functional utility library for javascript, and the functional, declarative, compositional style of programming that it allows for. We’ve been using it on a project at Carbon Five recently, and I think the team has found it to be a useful, and particularly fun way to program. So today we’ll see some of the benefits of this style of programming, and then see how TypeScript can make it even more powerful.
 
 ---
 
@@ -107,7 +107,9 @@ Today I want to talk about Ramda, which is a functional utility library for java
 
 So what is ramda? It’s a utility library like lodash or underscore, and in fact has most of the same functions. Real quick, is anyone here not familiar with lodash or underscore?
 
-What makes ramda different is three main things: it’s curried by default, it’s data-last, and because of the first two, it’s particularly composable. Let’s see what that jargon actually means.
+No problem. Briefly, they're these utility libraries that give you a grab bag of useful functions, like map and reduce and sort. They were particularly useful before ES6 added a lot of those kinds of functions to the array prototype, but most modern JavaScript projects still include one of them. 
+
+What makes ramda different is three main things: it’s curried by default, it’s data-last, and because of the first two, it’s particularly composable. And by the way that also describes lodash/fp, which we'll get to in a few slides. So let’s see what all that jargon actually means.
 
 ---
 
@@ -115,53 +117,55 @@ What makes ramda different is three main things: it’s curried by default, it�
 
 ### Types
 
-```typescript
-(x: number, y: number) => number
-(x: number) => (y: number) => number
+```javascript
+function add(n1) {
+  return function(n2) {
+    return n1 + n2;
+  }
+}
 ```
 
 ### Example
 
-```typescript
-add(1, 2) // 3
+```javascript
 add(1)(2) // 3
+add(1, 2) // 3
 ```
 
 ???
 
-Quickly, I want to explain what’s going on up here. For those who haven’t seen quite this syntax before, these are typescript type declarations for function signatures. The first one describes a function that takes two numbers, x and y, and returns a number. The second describes a function that takes one number, x, and returns a function that takes one number and returns a number.
+Currying. Currying is a technique (named after the mathematician Haskell Curry, and not the delicious food) that says that if you have a function that takes say two arguments, if you called it with one argument, you'd get back a function that's waiting for the second argument. Once you pass in that second argument, the functions returns as normal.
 
-Given that, we can talk about currying. Currying is a technique (named after the mathematician Haskell Curry, and not the delicious food) that says that if you have a function that takes two arguments, like the first signature, and you pass one argument in, you get back a function, like in the second signature. It keeps the first argument in memory, takes the second argument, and then does whatever it’s supposed to do. Currying is really similar to partial application, which you may have used with something like lodash dot partial.
+We can see what that looks like at the top here - it's basically just a higher order function. The difference between this and the real thing is that with a real curried function, you can either pass arguments one at a time, or all at once.
 
-Put another way, if add is curried, both add(1, 2) and add(1)(2) work the same way. Does that make sense to everybody?
+Currying is really similar to partial application, which you may have used with something like lodash dot partial.
 
+Does that make sense to everybody? Currying is a little weird at first, but is the basis for the rest of the features in ramda.
 ---
 
 ## Curried by default
 
 ### lodash
 
-```typescript
-function addOne(n: number): number {
+```javascript
+function addOne(n) {
 *  return _.add(1, n);
 }
 ```
 
 ### ramda
 
-```typescript
-const addOne: (n: number) => number = add(1);
+```javascript
+const addOne = add(1);
 ```
 
 ???
 
 We can see what currying actually does for us here - in the first example, with lodash, if I wanted a function that adds one to a number, I would do it in the normal way - take a number argument, add it, and return it. And yes, I could have just used plus.
 
-But the ramda version of add is curried - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and adds one to it. They also have the same type signature. But I was able to do that is this really concise, declarative way - addOne literally is just add one, and currying lets me say that.
+But the ramda version of add is curried - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and adds one to it. But I was able to do that is this really concise, declarative way - addOne literally is just add one, and currying lets me say that.
 
-A couple notes here:
-In typescript, I can declare that a constant has a function type, like I’m doing here. In this case I wouldn’t actually have to do it, because add already has the type number to number to number, but I thought it would be clearer to actually show the types.
-Also lodash (like ramda) has a curry function that takes a normal function and makes it curried, so you can use this same technique with lodash. It’s just not on by default, and as we’ll see in a second, not as useful with lodash.
+One thing to note is that lodash (like ramda) also has a curry function that takes a normal function and makes it curried, so you can use this same technique with lodash. It’s just not on by default, and as we’ll see in a second, not as useful with lodash.
 
 ---
 
@@ -169,21 +173,21 @@ Also lodash (like ramda) has a curry function that takes a normal function and m
 
 ### Lodash
 
-```typescript
-function addOneToAll(numbers: number[]): number[] {
+```javascript
+function addOneToAll(numbers) {
   return _.map(numbers, addOne);
 }
 ```
 
 ### Ramda
 
-```typescript
-const addOneToAll: (ns: number[]) => number[] = `map(addOne)`;
+```javascript
+const addOneToAll = map(addOne);
 ```
 
 ???
 
-Data-last. With lodash, most functions take the data they’re operating on as the first argument, and the function doing the work as the second argument. So for instance map is a function that takes an array, applies the function to every item in the array, and returns the results as a new array. So we can pass map an array of numbers, then pass our adder function from the last slide, and get an array of numbers plus one. Easy enough.
+Data-last. With lodash, most functions take the data they’re operating on as the first argument, and the function doing the work as the second argument. So for instance map is a function that takes an array, applies a function to every item in the array, and returns the results as a new array. So we can pass map an array of numbers, then pass our adder function from the last slide, and get an array of numbers plus one. Easy enough.
 
 With ramda, the order of arguments is reversed - we pass the function first, then the array. It’s a small change, but because of that, map being curried becomes a lot more useful. Now I can pass my adder function from the last slide to map, and I’m done. When addOneToAll gets passed an array, it’ll apply that function to each item and return them.
 
@@ -191,8 +195,8 @@ With ramda, the order of arguments is reversed - we pass the function first, the
 
 ## Composable
 
-```typescript
-export function tenTimesSum(`numbers`: number[]): number {
+```javascript
+function tenTimesSum(`numbers`) {
   return multiply(10, sum(`numbers`));
 }
 ```
@@ -201,39 +205,36 @@ export function tenTimesSum(`numbers`: number[]): number {
 
 So the curried functions are kind of cool, because they save you some keystrokes. Fine. That’s nice, but probably not worth a whole new library. The power of ramda comes with function composition. Because it’s easy to define functions as partial applications of other functions, it's easy to put together a set of functions that are all awaiting a final value, like add 1, and compose them together in a chain. Let's see how that actually looks.
 
-So in this code, we've got a function that takes an array of numbers, sums them up, and multiplies the answer by 10. I don't know why you need to do that, but I don't judge.
+So in this non-ramda code, we've got a function that takes an array of numbers, sums them up, and multiplies the answer by 10. I don't know why you need to do that, but I don't judge.
 
-Anyway as a ramda developer, I see a code smell. I'm taking an argument, numbers, and passing it as the last argument to a function, and then wrapping that whole thing as the last argument to another function. That means we can refactor this code into a function composition. And once you start looking for this smell, you'll start seeing it everywhere. So what's the refactor?
-
+Anyway as a ramda developer, I see a code smell. I'm taking an argument, numbers, and passing it as the last argument to a function, and then wrapping that whole thing as the last argument to another function. And once you start looking for this pattern, you'll start seeing it everywhere. It means that we can refactor this code into a function composition.  So what's that look like?
 
 --
 
-```typescript
-const tenTimesSum: (numbers: number[]) => number =
-*compose(multiply(10), sum);
+```javascript
+const tenTimesSum = compose(multiply(10), sum);
 ```
 
 ???
 
-Using ramda's compose function, we can chain the functions together, without ever having to actually get a hold of the parameter or use the function keyword.  Starting from the end, sum gets passed the numbers parameter, then passes its return value to multiply 10, and so on if there were more. In the Haskell language (another thing named after Haskell Curry), which Ramda takes a lot of inspiration from, this sort of composition is called “point-free style”.
+Using ramda's compose function, we can chain the functions together, without ever having to actually get a hold of the parameter or use the function keyword.  Starting from the end, sum gets passed the numbers array, then passes its return value to multiply 10, and so on if there were more. In the Haskell language (another thing named after Haskell Curry), which Ramda takes a lot of inspiration from, this sort of composition is called "point-free style", because the parameters, or "points", are never formally declared.
 
 --
 
-```typescript
-const tenTimesSum: (numbers: number[]) => number =
-*pipe(sum, multiply(10));
+```javascript
+const tenTimesSum = pipe(sum, multiply(10));
 ```
 
 ???
 
-Another option is to use pipe instead of compose. It works exactly the same, but fips the order - sum comes first instead of last. Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. It's really just a matter of preference.
+Another option is to use pipe instead of compose. It works exactly the same, but fips the order - sum comes first instead of last. Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version - just replace parentheses with commas. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. Which you use is really just a matter of preference.
 
 So why is this actually useful? Well other that being arguably more beautiful, it keeps the focus on the functions, instead of the values being passed through. It can also be a lot easier to maintian. For instance, there's a potential bug in this code - if one of the values in the numbers array was undefined, sum would fail, and return NaN. How can we fix it?
 
 --
 
 ```typescript
-const tenTimesSum: (numbers: number[]) => number = pipe(
+const tenTimesSum = pipe(
 * reject(isNil),
   sum,
   multiply(10)
@@ -252,7 +253,7 @@ class: center middle
 
 ???
 
-If all this is sounding familiar to you, I should mention is that lodash actually comes with something really similar to ramda, called lodash/fp. It's all the normal lodash functions, but with the curryed-by-default, data-last stuff. It works pretty well, and if you're used to lodash the function names might be more familiar. But my big issue with it is it doesn't have typescript type definitons yet, so you can't really use it with TypeScript. If you're on a javascript project though, it could be a good choice.
+If all this is sounding familiar to you, I should mention is that lodash actually comes with something really similar to ramda, called lodash/fp. It's all the normal lodash functions, but with the curryed-by-default, data-last stuff. It works pretty well, and if you're used to lodash the function names might be more familiar. But my big issue with it is it doesn't have typescript type definitons yet, so you can't really use it with TypeScript. As we'll see at the end of the talk, that's a big loss. If you're on a javascript project though, it could be a good choice, and you can use all the techniques I'm talking about tonight.
 
 ---
 
@@ -287,11 +288,16 @@ interface Marble {
   size: string;
   color: string;
 }
+
+const marble: Marble = {
+  color: 'red',
+  size: 'large'
+}
 ```
 
 ???
 
-Here’s the model for our app. This is a TypeScript interface; it describes the shape of an object, so elsewhere functions can say, “I only take arguments that match this interface.” And as you can see, there’s not a lot going on here. A marble has a size and a color, both of which are just strings like “large” or “red”.
+Here’s the model for our app. This is a TypeScript interface; it describes the shape of an object, so elsewhere functions can say, “I only take arguments that match this interface.” And as you can see, there’s not a lot going on here. A marble has a size and a color, both of which are just strings like “large” or “red”. In TypeScript you declare a type for an object by putting it after a colon - so here we're saying that marble implements the marble interface.
 
 So we have marbles, and a bag of marbles is represented by just an array of these marble objects. What we’re going to be building as part of our MVP is a set of functions that take an array of marbles, and just filter and count them in different ways.
 
@@ -311,9 +317,9 @@ So where to begin? Well we want to build part of the core functionality first, s
 
 ## reds()
 
-```typescript
-function reds(marbles: Marble[]): Marble[] {
-  return marbles.filter((marble: Marble): boolean => {
+```javascript
+function reds(marbles) {
+  return marbles.filter((marble) => {
     return marble.color === 'red';
   });
 }
@@ -321,7 +327,7 @@ function reds(marbles: Marble[]): Marble[] {
 
 ???
 
-So first we... set up our complicated build pipeline because that’s step one with javascript these days. But then we pick up the story, and pretty soon we’ve got something reasonable. We take the array of marbles, and filter for the ones where color equals red. Other than the type signatures, this should look pretty familiar to anyone doing ES6 development. It looks good, and certainly this is a lot better than something like a for loop - we’re talking about marbles and how to filter them, and not indexes and pushing and popping, which is great.
+So first we... set up our complicated build pipeline because that’s step one with javascript these days. But then we pick up the story, and pretty soon we’ve got something reasonable. We take the array of marbles, and filter for the ones where color equals red. This should look pretty familiar to anyone doing ES6 development. It looks good, and certainly this is a lot better than something like a for loop - we’re talking about marbles and how to filter them, and not indexes and pushing and popping, which is great.
 
 So how can we refactor this with ramda?
 
@@ -329,86 +335,30 @@ So how can we refactor this with ramda?
 
 ## reds(): refactor 1
 
-```typescript
-import { filter } from 'ramda';
-import { Marble } from './marble.model';
+```javascript
+const isRed = (marble) => marble.color === 'red';
 
-const isRed = (marble: Marble): boolean => marble.color === 'red';
-
-function reds(`marbles`: Marble[]): Marble[] {
+function reds(`marbles`) {
   return filter(isRed, `marbles`);
 }
 ```
 
 ???
 
-Step one is probably to pull out that isRed function, and to use ramda’s filter instead of the native one. Now that we’ve done this, we can see that we’re just taking in marbles, and passing them right to filter. But filter is curried, so we don’t need to declare this function at all! That leads to the second refactor:
+Step one is probably to pull out that isRed function, and to use ramda’s filter instead of the native one. Now that we’ve done this, we can see that that pattern show up again - we’re just taking in marbles, and passing them as the last argument to filter. Since filter is curried, so we don’t need to declare this function at all! That leads to the second refactor:
 
 ---
 
 ## reds(): refactor 2
 
 ```typescript
-const isRed = (marble: Marble): boolean => marble.color === 'red';
-const reds: (a: Marble[]) => Marble[] = `filter(isRed)`;
+const isRed = (marble) => marble.color === 'red';
+*const reds = filter(isRed);
 ```
 
 ???
 
-We can actually drop the function declaration entirely, and just declare reds as filter(isRed). Since filter is curried, that's all we need. 
-
----
-
-count: false
-
-## reds(): refactor 2
-
-```typescript
-const isRed = (marble: Marble): boolean => marble.color === 'red';
-const reds: `(a: Marble[]) => Marble[]` = filter(isRed);
-```
-
-???
-
-I'm adding a type signature both to make it clear to readers what this function does, and to make sure that our function does what we expect it to. 
-
----
-
-count: false
-
-## reds(): refactor 2
-
-```typescript
-const isRed = (marble: Marble): boolean => marble.color === 'red';
-const reds: (`a`: Marble[]) => Marble[] = filter(isRed);
-```
-
-???
-
-And one thing you might notice is that I’m just calling the Marble argument “a”. That’s usually bad programming practice - you want to name your variables with full words, so you’re not confused about what they do later. In this case though, we’re not passing that “a” to anything, and we don’t really care about the name, only the types - mable array to marble array. So on my current project we’ve been just naming those variables abc, to keep the focus on the types.
-
----
-
-
-## reds(): refactor 2 - inferred type
-
-### Visual Studio Code
-
-<img src="deck/images/red-refactor-2-infer.png" width="100%">
-
-???
-
-That type signature isn't strictly nessecary, since in this case TypeScript can infer the type.
-
----
-
-## reds(): refactor 2 - type error
-
-<img src="deck/images/red-refactor-2-bug.png" width="100%">
-
-???
-
-But if what we actually wanted was to not filter for all reds, but to find the first red, and we expressed that in the types with Marble Array to Marble, typescript would be able to catch that mistake right away. You definitely don’t need to use TypeScript to use Ramda, and in some ways it’s easier with standard JavaScript, for reasons we’ll see a little later. But since your functions are so concise, it’s really nice to have a compiler checking that the right type of data is passing through your pipelines. Now, you still need unit tests, but between the declarative nature of ramda, and the type safety of typescript - if a function looks right, and typechecks, it’s probably correct. And if it doesn’t typecheck, you probably made a mistake, like we did here. That level of confidence is really nice.
+Here we've dropped the function declaration entirely, and just declared reds as filter(isRed). Pretty nice.
 
 ---
 
@@ -427,22 +377,18 @@ Okay, so we can find red marbles. We get that branch merged in, and pick up the 
 ## filterMarbles() - ES6
 
 ```typescript
-function isMatchingMarble(
-  marble: Marble,
-  attribute: keyof Marble,
-  value: string
-): boolean {
+function isMatchingMarble(marble, attribute, value) {
 * return marble[attribute] === value;
 }
 
-function filterMarbles(
-  marbles: Marble[],
-  attribute: keyof Marble,
-  value: string
-): Marble[] {
-* return marbles.filter(marble =>
+function filterMarbles(marbles, attribute, value) {
+  return marbles.filter(marble =>
 *   isMatchingMarble(marble, attribute, value)
   );
+}
+
+function reds(marbles) {
+  return filterMarbles(marbles, 'color', 'red');
 }
 ```
 
@@ -454,19 +400,17 @@ If we wanted to do that in ES6, it would probably look something like this. We l
 
 ## filterMarbles(): refactor
 
-```typescript
-const filterMarbles = curry(
-  (
-    attribute: keyof Marble,
-    value: string,
-    marbles: Marble[]
-  ): Marble[] => filter(`propEq(attribute, value)`, marbles)
+```javascript
+const filterMarbles = curry((attribute, value, marbles) =>
+  filter(`propEq(attribute, value)`, marbles)
 );
+
+const reds = filterMarbles('color', 'red');
 ```
 
 ???
 
-So first of all - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function, but is curried for easier use. So we can drop that function entierly.
+So first of all - Ramda actually supplies a propEquals function that does the same thing as our isMatchingMarble function - it takes an attribute like color and a value like red, and an object, and sees if it has a color red or whatever. But it's curried for easier use. So we can drop that function entierly.
 
 ---
 
@@ -474,14 +418,12 @@ count: false
 
 ## filterMarbles(): refactor
 
-```typescript
-const filterMarbles = curry(
-  (
-*   attribute: keyof Marble,
-*   value: string,
-*   marbles: Marble[]
-  ): Marble[] => filter(propEq(`attribute, value`), marbles)
+```javascript
+const filterMarbles = curry((`attribute, value`, marbles) =>
+  filter(propEq(`attribute, value`), marbles)
 );
+
+const reds = filterMarbles('color', 'red');
 ```
 
 ???
@@ -494,23 +436,19 @@ count: false
 
 ## filterMarbles(): refactor
 
-```typescript
-const filterMarbles = `curry`(
-  (
-    attribute: keyof Marble,
-    value: string,
-    marbles: Marble[]
-  ): Marble[] => filter(propEq(`attribute, value`), marbles)
+```javascript
+const filterMarbles = `curry`((attribute, value, marbles) =>
+  filter(propEq(attribute, value), marbles)
 );
 
-filterMarbles('color')('red')(marbles);
-*filterMarbles('color', 'red')(marbles);
-filterMarbles('color', 'red', marbles);
+*const reds = filterMarbles('color', 'red');
+const filterByColor = filterMarbles('color');
+const redMarbles = filterMarbles('color', 'red', marbles);
 ```
 
 ???
 
-But, we can wrap Ramda's curry function around our function, which means that like the library functions, we can call filterMarbles color, red to make a function that pulls out red marbles, which is nice. And as you can see at the bottom, when we curry our function, we can group the arguments however we want.
+But, we wrapped Ramda's curry function around our function decleration. That means that like the library functions, we can call filterMarbles color, red to re-create the function that pulled out red marbles, which is nice. But we could also make a function that takes a color and a marble array, or just call the whole thing at once.
 
 ---
 
@@ -529,34 +467,37 @@ Okay, so by now hopefully you're feeling pretty good on currying and types. So f
 ## favoriteColor() types
 
 ```typescript
-interface Marble {
-  size: string;
-  color: string;
-}
+const marbles = [
+  { color: 'red', size: 'small' },
+  { color: 'blue', size: 'small' },
+  { color: 'red', size: 'large' },
+];
 ```
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string;
+function favoriteColor(marbles) {
+  return 'red';
+}
 ```
 
 ???
 
-Before we go on to the ramda answer, can anyone tell me an approach on how you would solve this? Here are the types again for a Marble and the favoriteColor function we want to build, if that helps. I'll give you a moment to think about it, and don't worry if your idea is only half-baked - if you're answer is too good, you won't be impressed by my solution!
+Before we go on to the ramda answer, can anyone tell me an approach on how you would solve this? Here's some sample data, and a stubbed out favoriteColor function, if that helps. I'll give you a moment to think about it, and don't worry if your idea is only half-baked - if you're answer is too good, you won't be impressed by the ramda solution!
 
 ---
 
 ## favoriteColor() - imperitive
 
-```typescript
-function favoriteColor(marbles: Marble[]): string {
-  const counts: { [color: string]: number } = {};
+```javascript
+function favoriteColor(marbles) {
+  const counts = {};
 
-  _.forEach(marbles, (marble: Marble): void => {
+  _.forEach(marbles, marble => {
     counts[marble.color] = (counts[marble.color] || 0)  + 1;
   });
 
-  let biggestNumber: number = 0;
-  let biggestColor: string;
+  let biggestNumber = 0;
+  let biggestColor;
 
   _.forEach(counts, (count, color) => {
     if (count > biggestNumber) {
@@ -571,14 +512,14 @@ function favoriteColor(marbles: Marble[]): string {
 
 ???
 
-Here's my imperitive solution. It's not really that interesting to take a close look, but there are a couple loops, some mutation, and a couple contionals. You could probably make it more functional with reduce, and more readable by extracting some functions. Whatever. Let's see what this looks like in ramda.
+Here's my imperitive solution. It's not really that interesting to take a close look, but there are a couple loops, some mutation, and a couple contionals. You could probably make it more functional with reduce, and more readable by extracting some functions. Whatever, I don't want to program like this anymore anyway. Let's see what this looks like in ramda.
 
 ---
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -594,12 +535,10 @@ So unlike the previous examples, this looks nothing like the imperitive solution
 
 ---
 
-count: false
-
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = `pipe`(
+const favoriteColor = `pipe`(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -611,18 +550,17 @@ const favoriteColor: (a: Marble[]) => string = `pipe`(
 
 ???
 
-First, we're again using the pipe function we saw at the begining of the talk, so our marbles go into groupBy, and its output goes into mapObjIndexed, and so on, until it returns. This is where typescript can really shine - the types make sure that as you tranform your data, the output type from one function matches the input type of the next one.
+First, we're again using the pipe function we saw at the begining of the talk, so our marbles go into groupBy, and its output goes into mapObjIndexed, and so on, until it returns. 
+<!-- This is where typescript can really shine - the types make sure that as you tranform your data, the output type from one function matches the input type of the next one. -->
 
 So what's happening here?
 
 ---
 
-count: false
-
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(`prop('color')`),
   mapObjIndexed(length),
   toPairs,
@@ -634,16 +572,14 @@ const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-First, prop is a ramda function that extracts an attribute from an object, so we can use prop(color) to make a function that gets the color from a marble.
+First, prop is a ramda function that extracts an attribute from an object, so calling prop('color') on a marble would get you back "red".
 
 ---
-
-count: false
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
 * groupBy(prop('color')),
   // {
   //   red: [
@@ -670,18 +606,16 @@ favoriteColor([
 
 ???
 
-GroupBy is a function that does mostly the same thing as the first part of the imperitive solution - takes an array of marbles, and a function that gets colors from marbles, and turns it into a dictionary where the keys are colors and the values are arrays of the matching marbles.
+GroupBy is a function that does mostly the same thing as the first part of the imperitive solution - takes an array of marbles, and a function that gets colors from marbles, and turns it into a dictionary where the keys are colors and the values are arrays of the matching marbles. 
 
-So given the inputs of two reds and one blue, group by would group them by color, like you see up there.
+Given the sample data at the bottom, this is what groupBy would return.
 
 ---
-
-count: false
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
 * mapObjIndexed(length),
   // {
@@ -703,16 +637,14 @@ favoriteColor([
 
 ???
 
-mapObjIndexed is ramda mapping function for objects. It works like map, but returns an object where only the values are changed. So passing the array counting function in lets us transform a dictionary of marble arrays into a dictionary of marble counts.
+mapObjIndexed is ramda mapping function for objects. It works like map, but returns an object where only the values are changed, and the keys are the same. So passing the array counting function "length" in lets us transform a dictionary of marble arrays into a dictionary of marble counts.
 
 ---
-
-count: false
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
 * toPairs,
@@ -734,16 +666,16 @@ favoriteColor([
 
 ???
 
-Next we use toPairs to transform the key-value combinations to an array of arrays of [color, count]. This will let us sort the arrays.
+Next we use toPairs to transform the key-value combinations to an array of arrays of [color, count]. In other functional languages you'd use a tuple instead of a pair, but we're in javascript, so close enough.
+
+In any case, this will let us sort the arrays.
 
 ---
-
-count: false
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -765,16 +697,14 @@ favoriteColor([
 
 ???
 
-Now that we have an array, we can sort it by count. Last just gives us the last item in an array, which in this case for each element is the count.
+Here, we're sorting the arrays by count. "Last" just gives us the last item in an array, which in this case for each element is the count.
 
 ---
-
-count: false
 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -797,12 +727,10 @@ Then we use last again to get the higest count
 
 ---
 
-count: false
-
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -821,22 +749,22 @@ favoriteColor([
 
 ???
 
-And finally use head to get the first element in the pair, the color. Done!
+And finally use head, which returns the first element in an array, to get the first element in the pair, the color. Done!
 
-So I think that reasonable people could disagree on if they like this or the imeritive version more. For me, this is nice. It's certainly very functional, and I like the clear step-by-step process. It does rely on the pairs construct, which isn't super intuitive, and the the last, last, head thing at the end is a little hard to follow. Let's see if we can do something at least about the latter issue.
+So as you can see, using Ramda doesn't just allow you code to be shorter - it also pushes you towards somtimes radically different solutions than what would be easy to do without it.
+
+That said, I think that reasonable people could disagree on if they like this or the imeritive version more. For me, this is nice. It's certainly very functional, and I like the clear step-by-step process. It does rely on the pairs construct, which isn't super intuitive, the the last, last, head thing at the end is a little hard to follow, and it's dense enough that it'd probably be easy to get the types wrong somehow and let a bug in. Let's see if we can do something at least about the last two issues.
 
 ---
 
 ## favoriteColor() refactor
 
-```typescript
-type ColorPair = [string, number];
+```javascript
+*const highestPair = last;
+*const colorFromPair = head;
+*const countFromPair = last;
 
-*const highestPair: (a: ColorPair[]) => ColorPair = last;
-*const colorFromPair: (a: ColorPair) => string = head;
-*const countFromPair: (a: ColorPair) => number = last;
-
-export const favoriteColor: (a: Marble[]) => string = pipe(
+const favoriteColor = pipe(
   groupBy(prop('color')),
   mapObjIndexed(length),
   toPairs,
@@ -848,13 +776,110 @@ export const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-This is a little more code, but a lot easier to read. On my current ramda project, we've found ourselves doing this pattern a lot - redefining ramda functions with more descriptive names. It's definitly good for readability - colorFromPair makes a lot more sense than head.
+So there's an easy fix to the last last head thing being confusing - declare more relevant names for the functions! This assignemnt doesn't cost hardly anything, and I think makes what the pipeline does a lot more obvious.
 
-It's also sometimes nessecary to get things to TypeCheck. TypeScript has a concept of generics, which let you define polymorphic functions, but they don't really work when you pass a function as a parameter. Generics are probably worth their own talk, so I won't get into it, but if you end up using TypeScript with Ramda (and you should), keep this technique in mind.
+But even with that, you could imagine this being pretty hard to debug during development. You have to keep in your head what each function returns, to make sure that the next function takes the right kind of data. And it can be easy to make mistakes - for instance, if you forgot that the normal map function doesn't work well with objects, and used it instead of mabObjIndexed, it might take a while to track down why your function wasn't working.
 
-So as you can see, using Ramda doesn't just allow you code to be shorter - it also pushes you towards somtimes radically different solutions than what would be easy to do without it.
+Happily, matching up types is something compilers are good at. So if we introduce TypeScript, our job gets a lot easier.
 
-And in fact, this is what a lot of the code in our Angular 4 project looks like - a bunch of small pointfree functions, composed together, tested in isolation, and then used in our component classes and RxJs streams.
+---
+
+## Side Note: TypeScript
+
+### JavaScript
+```javascript
+function helloWorld(times) {
+  return 'Hello World! '.repeat(times);
+}
+```
+
+```typescript
+function helloWorld(times: number): string {
+  return 'Hello World! '.repeat(times);
+}
+```
+
+???
+
+As a quick primer for anyone not familar, TypeScript is a language by Microsoft that is a statically typed superset of javascript. TypeScript code looks like JavaScript, and in fact JavaScript is generally valid TypeScript - if you change the extension from .js to .ts, it'll probably compile. The difference is that in typescript you can add type annotations with a colon, like with number and string. You can also define your own types, like the Marble interface we saw earlier.
+
+Once you have type annotation, the typescript compiler can catch all kinds of type errors for you. This ends up being super useful with complicated Ramda compositions.
+
+---
+
+## favoriteColor(): Typescript
+
+```typescript
+*type ColorPair = [string, number];
+
+const highestPair: (a: ColorPair[]) => ColorPair = last;
+const colorFromPair: (a: ColorPair) => string = head;
+const countFromPair: (a: ColorPair) => number = last;
+
+const favoriteColor: (a: Marble[]) => string = pipe(
+  groupBy(prop('color')),
+  mapObjIndexed(length),
+  toPairs,
+  sortBy(countFromPair),
+  highestPair,
+  colorFromPair
+);
+```
+
+???
+
+So here's our same pipeline, but now in typescript. You can see that we're defining a special pair type, to make those pairs a little easier to work with.
+
+We're also adding type signatures to the const functions. This is nice for two reasons - first, it gives typescript enough information to find type errors. Second, it's documentation - naming colorFromPair is clear, but enforcing that it pulls a string from a colorPair is really clear. And since our point-free functions don't declare formal parameters, having a place to say what those parameters actually are is nice.
+
+---
+
+class: center
+
+## favoriteColor(): Typescript catching bugs
+
+<img src="deck/images/pipe-error.png" width="80%">
+
+???
+
+So we can see here that if we made that mistake of using map instead of mapIndexedObj, this time TypeScript catches it right away. If we hover over that error, it tells us that map is expecting an array and is getting an object. Perfect!
+
+TypeScript is definitly the secret weapon with ramda, and is a big reason to chose ramda over lodash/fp. The nice thing is that between the declaritiveness of ramda, and the type safety of TypeScript - if a function looks right, and typechecks, it's probably correct. You definitly still need unit tests to catch edge cases, but the confidece you feel when you get all the red lines to go away is really nice.
+
+---
+
+## favoriteColor(): In Angular 4
+
+```typescript
+type ColorPair = [string, number];
+
+*class FavoritesComponent {
+* marbles: Marble[];
+*
+* favoriteColor() {
+*   return favoriteColor(this.marbles);
+* }
+*}
+
+const highestPair: (a: ColorPair[]) => ColorPair = last;
+const colorFromPair: (a: ColorPair) => string = head;
+const countFromPair: (a: ColorPair) => number = last;
+
+const favoriteColor: (a: Marble[]) => string = pipe(
+  groupBy(prop('color')),
+  mapObjIndexed(length),
+  toPairs,
+  sortBy(countFromPair),
+  highestPair,
+  colorFromPair
+);
+```
+
+???
+
+So pulling it all together, I'm currently using Ramda on an Angular 4 project, and this is what a lot of the code looks like - a bunch of small pointfree functions, composed together, and tested in isolation. Then our component classes mostly just handle holding state, and call out to the pure functions for any logic.
+
+It's made our code really readable and testable - and we've had some fun suggesting refactors while pairing - "hey, we can actually drop that last parameter all together".
 
 ---
 
@@ -868,7 +893,7 @@ And in fact, this is what a lot of the code in our Angular 4 project looks like 
 
 ???
 
-So that's probably enough for one talk. But there's a lot more in ramda to dig into, if you're interseted.
+Okay, so that's probably enough for one talk. But there's a lot more in ramda to dig into, if you're interseted.
 
 - Lenses are a way of creating functions that can get and set deeply neseted data without mutation, which can be great for something like redux.
 - ifEquals and cond are functions that can let you embed conditional logic in your pipelines

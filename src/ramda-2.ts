@@ -8,6 +8,7 @@ import {
   head,
   last,
   length,
+  map,
   mapObjIndexed,
   not,
   pipe,
@@ -37,13 +38,14 @@ type ColorPair = [string, number];
 
 const highestPair: (a: ColorPair[]) => ColorPair = last;
 const colorFromPair: (a: [string, number]) => string = head;
-const countFromPair: (a: [string, number]) => number = head;
+const countFromPair: (a: ColorPair) => number = last;
 
 export const favoriteColor: (a: Marble[]) => string = pipe(
   groupBy(prop('color')),
-  mapObjIndexed(length),
+  map(length),
   toPairs,
   sortBy(countFromPair),
   highestPair,
   colorFromPair
 );
+
