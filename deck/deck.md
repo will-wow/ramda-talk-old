@@ -38,7 +38,7 @@ What makes ramda different is three main things: itâ€™s curried by default, itâ€
 
 ## Currying
 
-### Types
+### Under the hood
 
 ```javascript
 function add(n1) {
@@ -59,11 +59,14 @@ add(1, 2) // 3
 
 Currying. Currying is a technique (named after the mathematician Haskell Curry, and not the delicious food) that says that if you have a function that takes say two arguments, if you called it with one argument, you'd get back a function that's waiting for the second argument. Once you pass in that second argument, the functions returns as normal.
 
-We can see what that looks like at the top here - it's basically just a higher order function. The difference between this and the real thing is that with a real curried function, you can either pass arguments one at a time, or all at once.
-
 Currying is really similar to partial application, which you may have used with something like lodash dot partial.
 
-Does that make sense to everybody? Currying is a little weird at first, but is the basis for the rest of the features in ramda.
+So we can see what that looks like at the top here - it's basically just a higher order function. The difference between this and the real thing is that with a real curried function, you can either pass arguments one at a time, or all at once, as you can see at the bottom. 
+
+Since add is curried, add(1)(2) does the same thing as add(1, 2)
+
+Does that make sense to everybody? Currying can be a little weird at first, but is the basis for the rest of the features in ramda.
+
 ---
 
 ## Curried by default
@@ -150,7 +153,7 @@ const tenTimesSum = pipe(sum, multiply(10));
 
 ???
 
-Another option is to use pipe instead of compose. It works exactly the same, but fips the order - sum comes first instead of last. Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version - just replace parentheses with commas. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. Which you use is really just a matter of preference.
+Another option is to use pipe instead of compose. It works exactly the same, but fips the order - sum comes first instead of last. Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version - just move some parentheses around. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. Which you use is really just a matter of preference.
 
 So why is this actually useful? Well other that being arguably more beautiful, it keeps the focus on the functions, instead of the values being passed through. It can also be a lot easier to maintian. For instance, there's a potential bug in this code - if one of the values in the numbers array was undefined, sum would fail, and return NaN. How can we fix it?
 
@@ -166,7 +169,7 @@ const tenTimesSum = pipe(
 
 ???
 
-We can just add a function that removes all nil values to our pipeline. Nice and easy, and much better than having to insert it into some deeply nested function calls.
+We can just add a function that removes all nil values to our pipeline. Now the data passed into sum has the nils rejected, and it can do its thing. Nice and easy, and much better than having to insert it into some deeply nested function calls.
 
 ---
 
@@ -529,9 +532,9 @@ favoriteColor([
 
 ???
 
-GroupBy is a function that does mostly the same thing as the first part of the imperitive solution - takes an array of marbles, and a function that gets colors from marbles, and turns it into a dictionary where the keys are colors and the values are arrays of the matching marbles. 
+GroupBy is a function that does mostly the same thing as the first part of the imperitive solution - takes an array of marbles, and a function that gets colors from marbles, and turns it into a dictionary where the keys are colors and the values are arrays of the matching marbles.
 
-Given the sample data at the bottom, this is what groupBy would return.
+Given the sample data at the bottom, this is what groupBy would return - the same marbles, but grouped by their color prop. And hey, that's exactly what the code says it would do!
 
 ---
 
@@ -699,7 +702,7 @@ const favoriteColor = pipe(
 
 ???
 
-So there's an easy fix to the last last head thing being confusing - declare more relevant names for the functions! This assignemnt doesn't cost hardly anything, and I think makes what the pipeline does a lot more obvious.
+So there's an easy fix to the last last head thing being confusing - declare more relevant names for the functions! This assignment is basically free, and I think it makes what the pipeline does a lot more obvious.
 
 But even with that, you could imagine this being pretty hard to debug during development. You have to keep in your head what each function returns, to make sure that the next function takes the right kind of data. And it can be easy to make mistakes - for instance, if you forgot that the normal map function doesn't work well with objects, and used it instead of mabObjIndexed, it might take a while to track down why your function wasn't working.
 
@@ -710,6 +713,7 @@ Happily, matching up types is something compilers are good at. So if we introduc
 ## Side Note: TypeScript
 
 ### JavaScript
+
 ```javascript
 function helloWorld(times) {
   return 'Hello World! '.repeat(times);
@@ -724,7 +728,7 @@ function helloWorld(times: number): string {
 
 ???
 
-As a quick primer for anyone not familar, TypeScript is a language by Microsoft that is a statically typed superset of javascript. TypeScript code looks like JavaScript, and in fact JavaScript is generally valid TypeScript - if you change the extension from .js to .ts, it'll probably compile. The difference is that in typescript you can add type annotations with a colon, like with number and string. You can also define your own types, like the Marble interface we saw earlier.
+So who here has programmed in TypeScript? As a quick primer for anyone not familar, TypeScript is a language by Microsoft that is a statically typed superset of javascript. TypeScript code looks like JavaScript, and in fact JavaScript is generally valid TypeScript - if you change the extension from .js to .ts, it'll probably compile. The difference is that in typescript you can add type annotations with a colon, like with number and string. You can also define your own types, like the Marble interface we saw earlier.
 
 Once you have type annotation, the typescript compiler can catch all kinds of type errors for you. This ends up being super useful with complicated Ramda compositions.
 
@@ -800,7 +804,7 @@ const favoriteColor: (a: Marble[]) => string = pipe(
 
 ???
 
-So pulling it all together, I'm currently using Ramda on an Angular 4 project, and this is what a lot of the code looks like - a bunch of small pointfree functions, composed together, and tested in isolation. Then our component classes mostly just handle holding state, and call out to the pure functions for any logic.
+So pulling it all together, we're currently using Ramda on an Angular 4 project, and this is what a lot of the code looks like - a bunch of small pointfree functions, composed together into more complicated functions, and tested in isolation. Then our component classes mostly just handle holding state, and call out to the pure functions for any logic.
 
 It's made our code really readable and testable - and we've had some fun suggesting refactors while pairing - "hey, we can actually drop that last parameter all together".
 
