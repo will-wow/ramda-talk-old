@@ -30,7 +30,7 @@ Today I want to talk about Ramda, which is a functional utility library for java
 
 So what is ramda? It’s a utility library like lodash or underscore, and in fact has most of the same functions. Real quick, is anyone here not familiar with lodash or underscore?
 
-No problem. Briefly, they're these utility libraries that give you a grab bag of useful functions, like map and reduce and sort. They were particularly useful before ES6 added a lot of those kinds of functions to the array prototype, but most modern JavaScript projects still include one of them. 
+No problem. Briefly, they're these utility libraries that give you a grab bag of useful functions, like map and reduce and sort. They were particularly useful before ES6 added a lot of those kinds of functions to the array prototype, but most modern JavaScript projects still include one of them.
 
 What makes ramda different is three main things: it’s curried by default, it’s data-last, and because of the first two, it’s particularly composable. And by the way that also describes lodash/fp, which we'll get to in a few slides. So let’s see what all that jargon actually means.
 
@@ -61,11 +61,11 @@ Currying. Currying is a technique (named after the mathematician Haskell Curry, 
 
 Currying is really similar to partial application, which you may have used with something like lodash dot partial.
 
-So we can see what that looks like at the top here - it's basically just a higher order function. The difference between this and the real thing is that with a real curried function, you can either pass arguments one at a time, or all at once, as you can see at the bottom. 
+So we can see what that looks like at the top here - it's basically just a higher order function. The difference between this and the real thing is that with a real curried function, you can either pass arguments one at a time, or all at once, as you can see at the bottom.
 
 Since add is curried, add(1)(2) does the same thing as add(1, 2)
 
-Does that make sense to everybody? Currying can be a little weird at first, but is the basis for the rest of the features in ramda.
+Currying is a pretty simple concept, but it can unlock some pretty powerful techniques.
 
 ---
 
@@ -74,22 +74,28 @@ Does that make sense to everybody? Currying can be a little weird at first, but 
 ### lodash
 
 ```javascript
-function addOne(n) {
-*  return _.add(1, n);
+function addSalesTax(price) {
+*  return price * 1.1025;
 }
+
+addSalesTax(20); // 22.05
 ```
 
 ### ramda
 
 ```javascript
-const addOne = add(1);
+import R from 'ramda';
+
+const addSalesTax = R.multiply(1.1025);
+
+addSalesTax(20); // 22.05
 ```
 
 ???
 
-We can see what currying actually does for us here - in the first example, with lodash, if I wanted a function that adds one to a number, I would do it in the normal way - take a number argument, add it, and return it. And yes, I could have just used plus.
+We can see what currying actually does for us here. Sales tax in Santa Monica is 10.25%. So if I wanted a function that adds sales tax to a price, in the first example without Ramda, I would do it in the normal way - take a number and multiply it by one point ten 25.
 
-But the ramda version of add is curried - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and adds one to it. But I was able to do that is this really concise, declarative way - addOne literally is just add one, and currying lets me say that.
+But the ramda has a curried multiply function - so when I pass only one argument to it, I get back a function exactly like the first example - it takes in a number, and sales tax to it. But I was able to do that is this really concise, declarative way - addSalesTax literally is just multiply by 1 point ten 25, and currying lets me say that.
 
 One thing to note is that lodash (like ramda) also has a curry function that takes a normal function and makes it curried, so you can use this same technique with lodash. It’s just not on by default, and as we’ll see in a second, not as useful with lodash.
 
@@ -100,45 +106,53 @@ One thing to note is that lodash (like ramda) also has a curry function that tak
 ### Lodash
 
 ```javascript
-function addOneToAll(numbers) {
-  return _.map(numbers, addOne);
+function addSalesTaxToAll(prices) {
+  return _.map(numbers, addSalesTax);
 }
+
+addSalesTaxToAll([20, 40]) // [22.05, 44.10];
 ```
 
 ### Ramda
 
 ```javascript
-const addOneToAll = map(addOne);
+const addSalesTaxToAll = R.map(addSalesTax);
+
+addSalesTaxToAll([20, 40]) // [22.05, 44.10];
 ```
 
 ???
 
-Data-last. With lodash, most functions take the data they’re operating on as the first argument, and the function doing the work as the second argument. So for instance map is a function that takes an array, applies a function to every item in the array, and returns the results as a new array. So we can pass map an array of numbers, then pass our adder function from the last slide, and get an array of numbers plus one. Easy enough.
+Data-last. With lodash, most functions take the data they’re operating on as the first argument, and the function doing the work as the second argument. So for instance map is a well-known function that takes an array, applies a function to every item in the array, and returns the results as a new array. So we can pass map an array of numbers, then pass our sales tax function from the last slide, and get an array of prices with sales tax. Easy enough.
 
-With ramda, the order of arguments is reversed - we pass the function first, then the array. It’s a small change, but because of that, map being curried becomes a lot more useful. Now I can pass my adder function from the last slide to map, and I’m done. When addOneToAll gets passed an array, it’ll apply that function to each item and return them.
+With ramda, the order of arguments is reversed - we pass the function first, then the array. It’s a small change, but because of that, map being curried becomes a lot more useful. Now we can pass the sales tax function from the last slide to map, and we're done. When addSalesTaxToSum gets passed an array, it’ll apply that function to each item and return an array.
 
 ---
 
 ## Composable
 
 ```javascript
-function tenTimesSum(`numbers`) {
-  return multiply(10, sum(`numbers`));
+function addSalesTaxForTen(`prices`) {
+  return addSalesTax(_.multiply(10, `prices`));
 }
+
+addSalesTaxForTen(2); // 22.05
 ```
 
 ???
 
-So the curried functions are kind of cool, because they save you some keystrokes. Fine. That’s nice, but probably not worth a whole new library. The power of ramda comes with function composition. Because it’s easy to define functions as partial applications of other functions, it's easy to put together a set of functions that are all awaiting a final value, like add 1, and compose them together in a chain. Let's see how that actually looks.
+So the curried functions are kind of cool, because they save you some keystrokes. Fine. That’s nice, but probably not worth a whole new library. The power of ramda comes with function composition. Because it’s easy to define functions as partial applications of other functions, it's easy to put together a set of functions that are all awaiting final data argument, like add(1), and compose them together in a chain. Let's see how that actually looks.
 
-So in this non-ramda code, we've got a function that takes an array of numbers, sums them up, and multiplies the answer by 10. I don't know why you need to do that, but I don't judge.
+So in this non-ramda code, we've got a function that takes a prices, multiplies it by 10, then calculates sales tax for the whole thing.
 
-Anyway as a ramda developer, I see a code smell. I'm taking an argument, numbers, and passing it as the last argument to a function, and then wrapping that whole thing as the last argument to another function. And once you start looking for this pattern, you'll start seeing it everywhere. It means that we can refactor this code into a function composition.  So what's that look like?
+Anyway as a ramda developer, I see a code smell. I'm taking an argument, prices, and passing it as the last argument to a function, and then wrapping that whole thing as the last argument to another function. And once you start looking for this pattern, you'll start seeing it everywhere. It means that we can refactor this code into a function composition.  So what's that look like?
 
 --
 
 ```javascript
-const tenTimesSum = compose(multiply(10), sum);
+const addSalesTaxForTen = R.compose(addSalesTax, R.multiply(10));
+
+addSalesTaxForTen(2); // 22.05
 ```
 
 ???
@@ -148,28 +162,32 @@ Using ramda's compose function, we can chain the functions together, without eve
 --
 
 ```javascript
-const tenTimesSum = pipe(sum, multiply(10));
+const addSalesTaxForTen = R.pipe(R.multiply(10), addSalesTax);
+
+addSalesTaxForTen(2.27); // 25.02675
 ```
 
 ???
 
-Another option is to use pipe instead of compose. It works exactly the same, but fips the order - sum comes first instead of last. Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version - just move some parentheses around. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. Which you use is really just a matter of preference.
+Another option is to use pipe instead of compose. It works exactly the same, but flips the order - multiply comes first instead of last (which doesn't matter in this case, but whatever). Compose is great for refactoring, because you can see how easy it is to go from the first version to the second version - just move some parentheses around. Pipe, we've found, is easier to read later - reading functions left-to-right is a lot more natural for english speakers. Which you use is really just a matter of preference.
 
-So why is this actually useful? Well other that being arguably more beautiful, it keeps the focus on the functions, instead of the values being passed through. It can also be a lot easier to maintian. For instance, there's a potential bug in this code - if one of the values in the numbers array was undefined, sum would fail, and return NaN. How can we fix it?
+So why is this actually useful? Well other that being arguably more beautiful, it keeps the focus on the functions, instead of the values being passed through. It can also be a lot easier to maintain. For instance, addSalesTax doesn't round to the nearest penny. How can we add that in?
 
 --
 
-```typescript
-const tenTimesSum = pipe(
-* reject(isNil),
-  sum,
-  multiply(10)
+```javascript
+const addSalesTaxForTen = R.pipe(
+  R.multiply(10),
+  addSalesTax,
+  roundToCents
 );
+
+addSalesTaxForTen(2.27); // 25.03
 ```
 
 ???
 
-We can just add a function that removes all nil values to our pipeline. Now the data passed into sum has the nils rejected, and it can do its thing. Nice and easy, and much better than having to insert it into some deeply nested function calls.
+Given a roundToCents function, with pipe it's easy - we add it to our pipeline, and now our answers are rounded. Nice and easy, and much better than having to insert it into some deeply nested function calls.
 
 ---
 
@@ -265,7 +283,7 @@ So how can we refactor this with ramda?
 const isRed = (marble) => marble.color === 'red';
 
 function reds(`marbles`) {
-  return filter(isRed, `marbles`);
+  return R.filter(isRed, `marbles`);
 }
 ```
 
@@ -279,7 +297,7 @@ Step one is probably to pull out that isRed function, and to use ramda’s filte
 
 ```typescript
 const isRed = (marble) => marble.color === 'red';
-*const reds = filter(isRed);
+*const reds = R.filter(isRed);
 ```
 
 ???
@@ -327,8 +345,8 @@ If we wanted to do that in ES6, it would probably look something like this. We l
 ## filterMarbles(): refactor
 
 ```javascript
-const filterMarbles = curry((attribute, value, marbles) =>
-  filter(`propEq(attribute, value)`, marbles)
+const filterMarbles = R.curry((attribute, value, marbles) =>
+  R.filter(`propEq(attribute, value)`, marbles)
 );
 
 const reds = filterMarbles('color', 'red');
@@ -345,8 +363,8 @@ count: false
 ## filterMarbles(): refactor
 
 ```javascript
-const filterMarbles = curry((`attribute, value`, marbles) =>
-  filter(propEq(`attribute, value`), marbles)
+const filterMarbles = R.curry((`attribute, value`, marbles) =>
+  R.filter(R.propEq(`attribute, value`), marbles)
 );
 
 const reds = filterMarbles('color', 'red');
@@ -363,8 +381,8 @@ count: false
 ## filterMarbles(): refactor
 
 ```javascript
-const filterMarbles = `curry`((attribute, value, marbles) =>
-  filter(propEq(attribute, value), marbles)
+const filterMarbles = `R.curry`((attribute, value, marbles) =>
+  R.filter(R.propEq(attribute, value), marbles)
 );
 
 *const reds = filterMarbles('color', 'red');
@@ -374,7 +392,7 @@ const redMarbles = filterMarbles('color', 'red', marbles);
 
 ???
 
-But, we wrapped Ramda's curry function around our function decleration. That means that like the library functions, we can call filterMarbles color, red to re-create the function that pulled out red marbles, which is nice. But we could also make a function that takes a color and a marble array, or just call the whole thing at once.
+But, we wrapped Ramda's curry function around our function deceleration. That means that like with the library functions, we can call filterMarbles color, red to re-create the function that pulled out red marbles, which is nice. But we could also make a function that takes a color and a marble array, or just call the whole thing at once.
 
 ---
 
@@ -386,7 +404,7 @@ class: center
 
 ???
 
-Okay, so by now hopefully you're feeling pretty good on currying and types. So for the last example, let's try something a little more complicated. Our next story is to build a favorite color feature - we want to search through a user's bag of marbles, find the most common color, and return it. Not too crazy, but this will definitly take a little more logic than the other examples.
+Okay, so by now hopefully you're feeling pretty good on function currying and composition. So for the last example, let's try something a little more complicated. Our next story is to build a favorite color feature - we want to search through a user's bag of marbles, find the most common color, and return it. Not too crazy, but this will definitly take a little more logic than the other examples.
 
 ---
 
@@ -412,7 +430,7 @@ Before we go on to the ramda answer, can anyone tell me an approach on how you w
 
 ---
 
-## favoriteColor() - imperitive
+## favoriteColor() - imperative
 
 ```javascript
 function favoriteColor(marbles) {
@@ -445,13 +463,13 @@ Here's my imperitive solution. It's not really that interesting to take a close 
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-  last,
-  head
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 ```
 
@@ -464,13 +482,13 @@ So unlike the previous examples, this looks nothing like the imperitive solution
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = `pipe`(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-  last,
-  head
+const favoriteColor = `R.pipe`(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 ```
 
@@ -486,13 +504,13 @@ So what's happening here?
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(`prop('color')`),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-  last,
-  head
+const favoriteColor = R.pipe(
+  R.groupBy(`R.prop('color')`),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 ```
 
@@ -505,8 +523,8 @@ First, prop is a ramda function that extracts an attribute from an object, so ca
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-* groupBy(prop('color')),
+const favoriteColor = R.pipe(
+* R.groupBy(R.prop('color')),
   // {
   //   red: [
   //    { color: 'red', size: 'small' },
@@ -516,11 +534,11 @@ const favoriteColor = pipe(
   //    { color: 'blue', size: 'small' },
   //   ]
   // }
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-  last,
-  head
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 
 favoriteColor([
@@ -541,17 +559,17 @@ Given the sample data at the bottom, this is what groupBy would return - the sam
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-* mapObjIndexed(length),
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+* R.mapObjIndexed(length),
   // {
   //   red: 2,
   //   blue: 1
   // }
-  toPairs,
-  sortBy(last),
-  last,
-  head
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 
 favoriteColor([
@@ -570,17 +588,17 @@ mapObjIndexed is ramda mapping function for objects. It works like map, but retu
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-* toPairs,
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+* R.toPairs,
   // [
   //   ['red', 2],
   //   ['blue', 1],
   // }
-  sortBy(last),
-  last,
-  head
+  R.sortBy(last),
+  R.last,
+  R.head
 );
 
 favoriteColor([
@@ -601,17 +619,17 @@ In any case, this will let us sort the arrays.
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-* sortBy(last),
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+* R.sortBy(last),
   // [
   //   ['blue', 1],
   //   ['red', 2],
   // }
-  last,
-  head
+  R.last,
+  R.head
 );
 
 favoriteColor([
@@ -630,14 +648,14 @@ Here, we're sorting the arrays by count. "Last" just gives us the last item in a
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-* last,
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+* R.last,
   // ['red', 2],
-  head
+  R.head
 );
 
 favoriteColor([
@@ -656,13 +674,13 @@ Then we use last again to get the higest count
 ## favoriteColor() pipeline
 
 ```typescript
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(last),
-  last,
-* head
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(last),
+  R.last,
+* R.head
   // 'red'
 );
 
@@ -686,15 +704,15 @@ That said, I think that reasonable people could disagree on if they like this or
 ## favoriteColor() refactor
 
 ```javascript
-*const highestPair = last;
-*const colorFromPair = head;
-*const countFromPair = last;
+*const highestPair = R.last;
+*const colorFromPair = R.head;
+*const countFromPair = R.last;
 
-const favoriteColor = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-* sortBy(countFromPair),
+const favoriteColor = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+* R.sortBy(countFromPair),
 * highestPair,
 * colorFromPair
 );
@@ -739,15 +757,15 @@ Once you have type annotation, the typescript compiler can catch all kinds of ty
 ```typescript
 *type ColorPair = [string, number];
 
-const highestPair: (a: ColorPair[]) => ColorPair = last;
-const colorFromPair: (a: ColorPair) => string = head;
-const countFromPair: (a: ColorPair) => number = last;
+const highestPair: (a: ColorPair[]) => ColorPair = R.last;
+const colorFromPair: (a: ColorPair) => string = R.head;
+const countFromPair: (a: ColorPair) => number = R.last;
 
-const favoriteColor: (a: Marble[]) => string = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(countFromPair),
+const favoriteColor: (a: Marble[]) => string = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(countFromPair),
   highestPair,
   colorFromPair
 );
@@ -771,7 +789,7 @@ class: center
 
 So we can see here that if we made that mistake of using map instead of mapIndexedObj, this time TypeScript catches it right away. If we hover over that error, it tells us that map is expecting an array and is getting an object. Perfect!
 
-TypeScript is definitly the secret weapon with ramda, and is a big reason to chose ramda over lodash/fp. The nice thing is that between the declaritiveness of ramda, and the type safety of TypeScript - if a function looks right, and typechecks, it's probably correct. You definitly still need unit tests to catch edge cases, but the confidece you feel when you get all the red lines to go away is really nice.
+TypeScript is definitely the secret weapon with ramda, and is a big reason to chose ramda over lodash/fp. The nice thing is that between the declaritiveness of ramda, and the type safety of TypeScript - if a function looks right, and typechecks, it's probably correct. You definitely still need unit tests to catch edge cases, but the confidence you feel when you get all the red lines to go away is really nice.
 
 ---
 
@@ -788,15 +806,15 @@ type ColorPair = [string, number];
 * }
 *}
 
-const highestPair: (a: ColorPair[]) => ColorPair = last;
-const colorFromPair: (a: ColorPair) => string = head;
-const countFromPair: (a: ColorPair) => number = last;
+const highestPair: (a: ColorPair[]) => ColorPair = R.last;
+const colorFromPair: (a: ColorPair) => string = R.head;
+const countFromPair: (a: ColorPair) => number = R.last;
 
-const favoriteColor: (a: Marble[]) => string = pipe(
-  groupBy(prop('color')),
-  mapObjIndexed(length),
-  toPairs,
-  sortBy(countFromPair),
+const favoriteColor: (a: Marble[]) => string = R.pipe(
+  R.groupBy(R.prop('color')),
+  R.mapObjIndexed(length),
+  R.toPairs,
+  R.sortBy(countFromPair),
   highestPair,
   colorFromPair
 );
@@ -820,11 +838,11 @@ It's made our code really readable and testable - and we've had some fun suggest
 
 ???
 
-Okay, so that's probably enough for one talk. But there's a lot more in ramda to dig into, if you're interseted.
+Okay, so that's probably enough for one talk. But there's a lot more in ramda to dig into, if you're interested.
 
-- Lenses are a way of creating functions that can get and set deeply neseted data without mutation, which can be great for something like redux.
+- Lenses are a way of creating functions that can get and set deeply nested data without mutation, which can be great for something like redux.
 - ifEquals and cond are functions that can let you embed conditional logic in your pipelines
-- FantasyLand is interesting - it's a set of interfaces for functional construcuts like Monads and Functors. If that's something that you're interested in, ramda supports fantasy land, so map can map over any FantasyLand-complient functor, for instance. If that doesn't mean anything to you, don't worry, you don't have to know about that stuff to get a lot out of ramda.
+- FantasyLand is interesting - it's a set of interfaces for functional constructs like Monads and Functors. If that's something that you're interested in, ramda supports fantasy land, so map can map over any FantasyLand-compliant functor, for instance. If that doesn't mean anything to you, don't worry, you don't have to know about that stuff to get a lot out of ramda.
 - Finally, since there are so many functions, it's helpful that the docs are pretty good. The official API docs are pretty extensive, and they also have this nice "what function should I use" page that I find really useful.
 
 ---
