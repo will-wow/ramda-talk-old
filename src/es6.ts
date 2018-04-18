@@ -20,27 +20,19 @@ export function filterMarbles(
   attribute: keyof Marble,
   value: string
 ): Marble[] {
-  return marbles.filter(marble =>
-    isMatchingMarble(marble, attribute, value)
-  );
+  return marbles.filter(marble => isMatchingMarble(marble, attribute, value));
 }
 
 export function blues(marbles: Marble[]): Marble[] {
-  return _.filter(marbles, marble =>
-    isMatchingMarble(marble, 'color', 'blue')
-  );
+  return _.filter(marbles, marble => isMatchingMarble(marble, 'color', 'blue'));
 }
 
 export function smalls(marbles: Marble[]): Marble[] {
-  return _.filter(marbles, marble =>
-    isMatchingMarble(marble, 'size', 'small')
-  );
+  return _.filter(marbles, marble => isMatchingMarble(marble, 'size', 'small'));
 }
 
 export function notReds(marbles: Marble[]): Marble[] {
-  return _.reject(marbles, marble =>
-    isMatchingMarble(marble, 'color', 'blue')
-  );
+  return _.reject(marbles, marble => isMatchingMarble(marble, 'color', 'blue'));
 }
 
 export function bigReds(marbles: Marble[]): Marble[] {

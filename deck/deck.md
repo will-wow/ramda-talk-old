@@ -107,7 +107,7 @@ One thing to note is that lodash (like ramda) also has a curry function that tak
 
 ```javascript
 function addSalesTaxToAll(prices) {
-  return _.map(numbers, addSalesTax);
+  return _.map(prices, addSalesTax);
 }
 
 addSalesTaxToAll([20, 40]) // [22.05, 44.10];

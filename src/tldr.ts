@@ -7,7 +7,7 @@ import {
   add,
   sum,
   isNil,
-  multiply
+  multiply,
 } from 'ramda';
 import * as _ from 'lodash';
 
@@ -20,9 +20,7 @@ export function addOneToAll(numbers: number[]): number[] {
 }
 
 export const addOneRamda: (n: number) => number = add(1);
-export const addOneToAllRamda: (ns: number[]) => number[] = map(
-  addOne
-);
+export const addOneToAllRamda: (ns: number[]) => number[] = map(addOne);
 
 export function tenTimesSum(numbers: number[]): number {
   return multiply(10, sum(numbers));

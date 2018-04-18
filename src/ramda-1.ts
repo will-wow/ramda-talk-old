@@ -18,7 +18,6 @@ export const reds: (a: Marble[]) => Marble[] = filter(isRed);
 
 // const red: (a: Marble[]) => Marble = filter(isRed);
 
-
 const filterMarbles = (
   attribute: keyof Marble,
   value: string

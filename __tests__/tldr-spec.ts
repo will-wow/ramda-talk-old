@@ -5,7 +5,7 @@ import {
   addOneToAllRamda,
   tenTimesSum,
   tenTimesSum2,
-  tenTimesSum3
+  tenTimesSum3,
 } from '../src/tldr';
 
 describe('addOne', () => {
